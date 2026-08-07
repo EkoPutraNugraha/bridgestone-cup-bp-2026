@@ -269,3 +269,11 @@ detail pages are implemented with local dummy data; the backend has not started.
 - Added a GitHub Pages workflow that publishes only the static `frontend/` directory on pushes to `master` or `main`.
 - Added repository `README.md` with local preview and GitHub Pages activation instructions plus a minimal `.gitignore` for local/system files and secrets.
 - Repository currently has no commits and no remote; a GitHub repository/remote is still required before a public URL can be created.
+
+# Update 2026-08-07 16:10 WIB — GitHub publication
+
+- Created the initial repository commit and connected the local project to `https://github.com/EkoPutraNugraha/bridgestone-cup-bp-2026` as `origin`.
+- Pushed branch `master` and configured GitHub Pages to deploy through GitHub Actions.
+- The first workflow run occurred before Pages was enabled and failed as expected; this progress commit retriggers the configured deployment after Pages activation.
+- Public preview target: `https://ekoputranugraha.github.io/bridgestone-cup-bp-2026/`.
+- Final live-site and navigation verification remains pending until the new workflow run completes.
