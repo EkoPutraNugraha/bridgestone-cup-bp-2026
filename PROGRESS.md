@@ -276,4 +276,4 @@ detail pages are implemented with local dummy data; the backend has not started.
 - Pushed branch `master` and configured GitHub Pages to deploy through GitHub Actions.
 - The first workflow run occurred before Pages was enabled and failed as expected; this progress commit retriggers the configured deployment after Pages activation.
 - Public preview target: `https://ekoputranugraha.github.io/bridgestone-cup-bp-2026/`.
-- Final live-site and navigation verification remains pending until the new workflow run completes.
+- Deployment run `#2` completed successfully. Verified the public Home page and the Badminton sport-page link at the target URL; the sport page loaded its Bracket/Schedule content without horizontal overflow and produced no relevant browser-console errors.
