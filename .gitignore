@@ -1,7 +1,11 @@
 .DS_Store
 Thumbs.db
 node_modules/
+.pnpm-store/
 .env
 .env.*
 !.env.example
-*.md
+# Internal Codex/project-owner notes. Public documentation remains trackable.
+AGENTS.md
+PROGRESS.md
+PROJECT_CONTEXT.md
