@@ -81,9 +81,12 @@ export function renderGalleryPreview(items = [], source = 'empty') {
     [sportGroups[index], sportGroups[randomIndex]] = [sportGroups[randomIndex], sportGroups[index]];
   }
   const selectedItems = sportGroups.slice(0, 3).map(([, sportItems]) => sportItems[Math.floor(Math.random() * sportItems.length)]);
-  const cards = Array.from({ length:3 }, (_, index) => {
-    const item = selectedItems[index];
-    if (!item) return `<article class="gallery-preview-empty"><small>0${index + 1}</small><strong>FOTO BELUM TERSEDIA</strong><span>Upload foto cabor lain dari halaman admin Gallery.</span></article>`;
+  list.dataset.count = String(selectedItems.length);
+  if (!selectedItems.length) {
+    list.innerHTML = '<article class="gallery-preview-empty"><strong>FOTO BELUM TERSEDIA</strong><span>Foto akan tampil setelah dipublikasikan melalui Admin Gallery.</span></article>';
+    return;
+  }
+  const cards = selectedItems.map((item, index) => {
     const slug = String(item.sportId || '').replace(/^sport-/, '');
     const english = document.documentElement.lang === 'en';
     const title = english ? (item.titleEn || item.titleId || 'TOURNAMENT MOMENT') : (item.titleId || 'MOMEN TURNAMEN');
