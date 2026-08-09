@@ -1,6 +1,6 @@
-import './public-i18n.js?v=20260809-admin-footer';
+import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE as apiBase } from './api-config.js';
-import { renderGalleryPreview, renderHome, renderGreetings, renderSchedules, renderSports, renderSupporters } from './components/home.js?v=20260809-mobile-flow';
+import { renderGalleryPreview, renderHome, renderGreetings, renderSchedules, renderSports, renderSupporters } from './components/home.js?v=20260809-clean-empty-copy';
 
 renderHome();
 
@@ -159,7 +159,7 @@ const supportCard = document.querySelector('.support-feature blockquote');
 
 const renderSupport = index => {
   if (!activeSupportSlides.length) {
-    supportQuote.textContent = 'Dukungan akan tampil setelah dipublikasikan oleh admin.';
+    supportQuote.textContent = 'DUKUNGAN BELUM TERSEDIA';
     supportAuthor.textContent = '— BRIDGESTONE CUP BP 2026';
     supportMedia.dataset.label = 'SUPPORT';
     supportMedia.style.backgroundImage = '';

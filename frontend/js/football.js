@@ -1,6 +1,6 @@
-import './public-i18n.js?v=20260809-public-i18n';
+import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE } from './api-config.js';
-import { apiBracketView, bracketView, scheduleView, shell } from './sports.js?v=20260808-empty-schedule';
+import { apiBracketView, bracketView, scheduleView, shell } from './sports.js?v=20260809-clean-empty-copy';
 
 const host = document.querySelector('#sport-view');
 const localTeams = [

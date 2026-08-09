@@ -1,4 +1,4 @@
-import './public-i18n.js?v=20260809-public-i18n';
+import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE as apiBase } from './api-config.js';
 import {
   apiBracketView,
@@ -6,7 +6,7 @@ import {
   scheduleView,
   shell,
   standingView,
-} from './sports.js?v=20260808-live-only';
+} from './sports.js?v=20260809-clean-empty-copy';
 
 const host = document.querySelector('#sport-view');
 let groups = [];
@@ -20,17 +20,16 @@ const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, character =>
   '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
 }[character]));
 
-const emptyState = (title, message) => `
+const emptyState = title => `
   <div class="public-empty-state">
     <strong>${escapeHtml(title)}</strong>
-    <span>${escapeHtml(message)}</span>
   </div>`;
 
 function scorers() {
   const content = topScorers.length
     ? topScorers.map((player, index) => `
         <article><b>${String(index + 1).padStart(2, '0')}</b><strong>${escapeHtml(player.name)}</strong><span>${player.goals} GOALS${player.team ? ` &bull; ${escapeHtml(player.team)}` : ''}</span></article>`).join('')
-    : emptyState('TOP SCORER BELUM TERSEDIA', 'Daftar pencetak gol akan tampil setelah diisi oleh admin.');
+    : emptyState('TOP SCORER BELUM TERSEDIA');
   return `<aside class="top-scorers" data-source="${scorerSource}"><header><span>PLAYER RANKING</span><h2>TOP SCORER</h2></header><div>${content}</div></aside>`;
 }
 
@@ -49,13 +48,13 @@ function render(id) {
     host.dataset.source = bracketSource;
     host.innerHTML = liveBracket
       ? bracketWinnerView('FUTSAL WINNERS', liveBracket)
-      : emptyState('HASIL BELUM TERSEDIA', 'Pemenang akan tampil setelah bracket disimpan dan pertandingan selesai.');
+      : emptyState('HASIL BELUM TERSEDIA');
     return;
   }
   host.dataset.source = bracketSource;
   const bracket = liveBracket
     ? apiBracketView('TOURNAMENT BRACKET', liveBracket)
-    : emptyState('BRACKET BELUM TERSEDIA', 'Bracket akan tampil setelah dibuat oleh admin.');
+    : emptyState('BRACKET BELUM TERSEDIA');
   host.innerHTML = `${bracket}${scorers()}`;
 }
 

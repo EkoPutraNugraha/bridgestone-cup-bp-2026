@@ -1,11 +1,11 @@
-import './public-i18n.js?v=20260809-public-i18n';
+import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE as apiBase } from './api-config.js';
 import {
   apiBracketView,
   bracketWinnerView,
   shell,
   standingView,
-} from './sports.js?v=20260808-live-only';
+} from './sports.js?v=20260809-clean-empty-copy';
 
 const host = document.querySelector('#sport-view');
 let groups = [];
@@ -13,10 +13,9 @@ let liveBracket = null;
 let standingSource = 'empty';
 let bracketSource = 'empty';
 
-const emptyState = (title, message) => `
+const emptyState = title => `
   <div class="public-empty-state">
     <strong>${title}</strong>
-    <span>${message}</span>
   </div>`;
 
 function render(id) {
@@ -29,12 +28,12 @@ function render(id) {
   if (id === 'winner') {
     host.innerHTML = liveBracket
       ? bracketWinnerView('TABLE TENNIS WINNERS', liveBracket)
-      : emptyState('HASIL BELUM TERSEDIA', 'Pemenang Table Tennis akan tampil setelah bracket disimpan dan pertandingan selesai.');
+      : emptyState('HASIL BELUM TERSEDIA');
     return;
   }
   host.innerHTML = liveBracket
     ? apiBracketView('TABLE TENNIS CHAMPIONSHIP BRACKET', liveBracket)
-    : emptyState('BRACKET BELUM TERSEDIA', 'Bracket Table Tennis akan tampil setelah dibuat dari Group Standing.');
+    : emptyState('BRACKET BELUM TERSEDIA');
 }
 
 shell('Table Tennis', [

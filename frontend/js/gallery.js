@@ -1,4 +1,4 @@
-import './public-i18n.js?v=20260809-public-i18n';
+import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE as apiBase } from './api-config.js';
 import { gallerySports } from './data/gallery-data.js?v=20260809-live-only';
 
@@ -57,7 +57,7 @@ if (momentsGrid) {
   document.querySelector('.gallery-heading>span').textContent = moments.length ? `${moments.length} tournament ${photoWord.toLowerCase()} — select any image to view the full moment.` : 'Belum ada foto yang dipublikasikan untuk cabang olahraga ini.';
 
   if (!moments.length) {
-    momentsGrid.innerHTML = '<div class="gallery-empty-state"><strong>FOTO BELUM TERSEDIA</strong><span>Foto akan tampil setelah dipublikasikan melalui Admin Gallery.</span></div>';
+    momentsGrid.innerHTML = '<div class="gallery-empty-state"><strong>FOTO BELUM TERSEDIA</strong></div>';
   } else {
     momentsGrid.innerHTML = moments.map((moment, index) => `<button class="moment-card live" style="--accent:${selectedSport.accent}" type="button" data-index="${index}" aria-label="Buka ${escapeHtml(moment.title)} ${moment.number}"><img src="${escapeHtml(moment.imageUrl)}" alt="${escapeHtml(moment.alt)}"><span>${moment.number}</span><i>↗</i><div><small>${escapeHtml(moment.sport)}</small><strong>${escapeHtml(moment.title)}</strong></div></button>`).join('');
     const dialog = document.querySelector('#gallery-lightbox');

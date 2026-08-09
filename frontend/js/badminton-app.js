@@ -1,13 +1,12 @@
-import './public-i18n.js?v=20260809-public-i18n';
+import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE as apiBase } from './api-config.js';
-import { apiBracketView, scheduleView, shell } from './sports.js?v=20260809-live-only';
+import { apiBracketView, scheduleView, shell } from './sports.js?v=20260809-clean-empty-copy';
 
 const host = document.querySelector('#sport-view');
 
 const emptyBracket = `
   <div class="public-empty-state">
     <strong>BRACKET BELUM TERSEDIA</strong>
-    <span>Bracket Badminton akan tampil setelah dibuat dan disimpan oleh admin.</span>
   </div>`;
 
 async function loadApiData() {

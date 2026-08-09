@@ -2,7 +2,7 @@ import { sports } from '../data/home-data.js?v=20260809-live-only';
 
 const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, character => ({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;' }[character]));
 const initials = name => name.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join('').toUpperCase();
-const emptySection = (title, message) => `<div class="home-empty-state"><strong>${title}</strong><span>${message}</span></div>`;
+const emptySection = title => `<div class="home-empty-state"><strong>${title}</strong></div>`;
 const greetingCard = item => { const english = document.documentElement.lang === 'en'; const role = english ? (item.roleEn || item.role || item.roleId) : (item.roleId || item.role); const message = english ? (item.messageEn || item.message || item.messageId) : (item.messageId || item.message); return `<article class="greeting-card">${item.photoUrl ? `<div class="portrait live"><img src="${escapeHtml(item.photoUrl)}" alt="${english ? 'Photo of' : 'Foto'} ${escapeHtml(item.name)}"></div>` : `<div class="portrait"><img src="assets/images/portrait-head.svg" alt=""><i></i><span>${escapeHtml(item.initials || initials(item.name))}</span><b>BP</b></div>`}<h3>${escapeHtml(item.name)}</h3><strong>${escapeHtml(role)}</strong><blockquote>“<p>${escapeHtml(message)}</p></blockquote><small>BRIDGESTONE CUP BP 2026</small></article>`; };
 
 export function renderGreetings(items = [], source = 'empty') {
@@ -10,7 +10,7 @@ export function renderGreetings(items = [], source = 'empty') {
   list.dataset.source = source;
   list.innerHTML = items.length
     ? items.map(greetingCard).join('')
-    : emptySection('GREETING BELUM TERSEDIA', 'Sambutan akan tampil setelah dipublikasikan oleh admin.');
+    : emptySection('GREETING BELUM TERSEDIA');
 }
 
 const supporterImages = {
@@ -28,7 +28,7 @@ export function renderSupporters(items = [], source = 'empty') {
       const count = Number(item.count) || 0;
       return `<article><b>${item.rank}</b><img src="${supporterImages[team] || 'assets/images/support-icon.png'}" alt=""><h4>${escapeHtml(team)}</h4><p>${count} Support Card${count === 1 ? '' : 's'}</p></article>`;
     }).join('')
-    : emptySection('LEADERBOARD BELUM TERSEDIA', 'Peringkat supporter akan tampil setelah support card dipublikasikan.');
+    : emptySection('LEADERBOARD BELUM TERSEDIA');
 }
 
 const sportLinks = {
@@ -43,7 +43,7 @@ const scheduleLinks = Object.fromEntries(Object.entries(sportLinks).map(([name, 
 
 const emptyScheduleCard = sport => sport.name === 'FISHING'
   ? `<a class="schedule-card fishing" data-source="event" href="${sportLinks.FISHING}"><header><span>${sport.code}</span><h3>${sport.name}</h3></header><div class="fishing-panel"><time><b>13</b><small>DESEMBER</small></time><label>LOKASI</label><p>Empang Ikan Mas Bungur</p><label>WAKTU</label><strong>07.00 WIB</strong></div><div class="final-event">FINAL EVENT<br>Timbang hasil tangkapan</div></a>`
-  : `<a class="schedule-card schedule-card-empty" data-source="empty" href="${scheduleLinks[sport.name] || '#sports'}"><header><span>${sport.code}</span><h3>${sport.name}</h3></header><div class="schedule-empty"><strong>JADWAL BELUM TERSEDIA</strong><span>Akan tampil setelah disimpan oleh admin.</span></div></a>`;
+  : `<a class="schedule-card schedule-card-empty" data-source="empty" href="${scheduleLinks[sport.name] || '#sports'}"><header><span>${sport.code}</span><h3>${sport.name}</h3></header><div class="schedule-empty"><strong>JADWAL BELUM TERSEDIA</strong></div></a>`;
 
 const liveScheduleCard = (sport, matches) => `<a class="schedule-card" data-source="api" href="${scheduleLinks[sport.name] || '#sports'}"><header><span>${sport.code}</span><h3>${sport.name}</h3></header>${matches.slice(0, 5).map((match, index) => {
   const scheduledAt = new Date(match.scheduledAt);
@@ -84,7 +84,7 @@ export function renderGalleryPreview(items = [], source = 'empty') {
   list.dataset.count = String(selectedItems.length);
   list.closest('#gallery')?.setAttribute('data-gallery-count', String(selectedItems.length));
   if (!selectedItems.length) {
-    list.innerHTML = '<article class="gallery-preview-empty"><strong>FOTO BELUM TERSEDIA</strong><span>Foto akan tampil setelah dipublikasikan melalui Admin Gallery.</span></article>';
+    list.innerHTML = '<article class="gallery-preview-empty"><strong>FOTO BELUM TERSEDIA</strong></article>';
     return;
   }
   const cards = selectedItems.map((item, index) => {
