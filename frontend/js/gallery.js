@@ -36,7 +36,7 @@ if (collectionGrid) {
     const photoWord = english ? (count === 1 ? 'PHOTO' : 'PHOTOS') : 'FOTO';
     const title = english ? (featured?.titleEn || featured?.titleId) : featured?.titleId;
     const alt = english ? (featured?.altEn || featured?.altId || title || `Photo of ${sport.name}`) : (featured?.altId || title || `Foto ${sport.name}`);
-    return `<a class="collection-card${featured ? ' live' : ' empty'}" style="--accent:${sport.accent}" href="gallery-sport.html?sport=${sport.id}">${featured ? `<img src="${escapeHtml(featured.publicUrl)}" alt="${escapeHtml(alt)}">` : ''}<small>${String(index + 1).padStart(2, '0')}</small><span class="sport-code">${sport.code}</span><div><h2>${sport.name} ${english ? 'GALLERY' : 'GALERI'}</h2><p>${count ? `${english ? 'OPEN COLLECTION' : 'BUKA KOLEKSI'} · ${count} ${photoWord}` : (english ? 'PHOTO NOT AVAILABLE' : 'FOTO BELUM TERSEDIA')}</p><b>↗</b></div></a>`;
+    return `<a class="collection-card${featured ? ' live' : ' empty'}" style="--accent:${sport.accent}" href="gallery-sport.html?sport=${sport.id}">${featured ? `<img src="${escapeHtml(featured.publicUrl)}" alt="${escapeHtml(alt)}">` : ''}<small>${String(index + 1).padStart(2, '0')}</small><span class="sport-code">${sport.code}</span><div><h2>${sport.name} ${english ? 'GALLERY' : 'GALERI'}</h2><p>${count ? `${english ? 'OPEN COLLECTION' : 'BUKA KOLEKSI'} &middot; ${count} ${photoWord}` : (english ? 'PHOTO NOT AVAILABLE' : 'FOTO BELUM TERSEDIA')}</p><b>&rarr;</b></div></a>`;
   }).join('');
 }
 
