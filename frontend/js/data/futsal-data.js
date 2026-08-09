@@ -4,7 +4,7 @@ export const futsalGroups=[
  {name:'GROUP 3',teams:[['CALENDER','6 PTS'],['ALL ENGINEERING','3 PTS']]},
  {name:'GROUP 4',teams:[['BANBURY','6 PTS'],['PSS BUILDING','3 PTS']]}
 ];
-export const futsalSchedule=[
+export const futsalSchedule=[]; const futsalScheduleDesignSample=[
  {time:'18:00',home:'FINAL INSP',away:'BANBURY',round:'QF'},{time:'18:45',home:'OFFICE',away:'EXT–BEAD',round:'QF'},
  {time:'18:00',home:'BANBURY',away:'EXT–BEAD',round:'SF'},{time:'18:45',home:'TIRE CURING',away:'BIAS BUILDING',round:'SF'}
 ];

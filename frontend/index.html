@@ -8,7 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600;1,800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/home.css?v=20260807-support-clean-2">
+  <link rel="stylesheet" href="css/home.css?v=20260809-gold-admin-footer">
+  <link rel="stylesheet" href="css/home-live-schedule.css?v=20260809-random-gallery-aligned">
 </head>
 <body>
   <a class="skip-link" href="#main">Lewati ke konten utama</a>
@@ -20,6 +21,9 @@
       <button class="language-toggle" type="button" aria-label="Ganti bahasa"><span class="active">ID</span><span>EN</span></button>
     </nav>
   </header>
+  <aside id="announcement-banner" class="announcement-banner" aria-live="polite" hidden>
+    <span>PENGUMUMAN</span><div><strong id="announcement-title"></strong><p id="announcement-body"></p></div><button id="announcement-close" type="button" aria-label="Tutup pengumuman">&times;</button>
+  </aside>
 
   <main id="main">
     <section class="panel hero" id="home" aria-labelledby="hero-title">
@@ -40,14 +44,14 @@
     </section>
 
     <section class="panel section" id="schedule" aria-labelledby="schedule-title">
-      <header class="section-heading decorated"><p>BRIDGESTONE CUP BP 2026</p><h2 id="schedule-title">EVENT SCHEDULE</h2><span>8&ndash;13 DESEMBER &bull; CAFETARIA &amp; EMPANG IKAN MAS BUNGUR</span></header>
+      <header class="section-heading decorated"><p>BRIDGESTONE CUP BP 2026</p><h2 id="schedule-title">EVENT SCHEDULE</h2></header>
       <div class="schedule-grid" id="schedule-list"></div>
     </section>
 
     <section class="panel section" id="sports" aria-labelledby="sports-title">
       <header class="arena-heading"><p>SIX SPORTS. ONE CHAMPION.</p><h2 id="sports-title">CHOOSE YOUR ARENA</h2><span>Select a competition category to explore schedules, brackets, and standings.</span></header>
       <div class="sports-grid" id="sports-list"></div>
-      <div class="arena-hint"><span><b>ACTIVE CATEGORY</b>FUTSAL</span><p>Choose a sport to open its event overview</p></div>
+      <div class="arena-hint"><div class="arena-status"><i aria-hidden="true"></i><div><b>ACTIVE CATEGORY</b><strong class="arena-active-name">—</strong></div></div><p>Choose a sport to open its event overview</p></div>
     </section>
 
     <section class="panel section" id="gallery" aria-labelledby="gallery-title">
@@ -65,6 +69,9 @@
       <h3 class="support-subtitle"><img src="assets/images/support-icon.png" alt="">TOP SUPPORTER TEAMS</h3><div class="support-grid" id="support-list"></div>
     </section>
   </main>
-  <script type="module" src="js/home.js?v=20260807-support-arrows"></script>
+  <footer class="public-footer">
+    <a class="admin-login-link" href="pages/admin-login.html">Akses pengelola</a>
+  </footer>
+  <script type="module" src="js/home.js?v=20260809-admin-footer"></script>
 </body>
 </html>

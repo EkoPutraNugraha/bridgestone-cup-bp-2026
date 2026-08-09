@@ -1,0 +1,243 @@
+import { API_BASE, adminRequest, clearAdminSession, requireAdmin } from './admin-auth.js';
+
+const elements = {
+  sport: document.querySelector('#sport-select'),
+  tournament: document.querySelector('#tournament-select'),
+  participants: document.querySelector('#participants-input'),
+  summary: document.querySelector('#participant-summary'),
+  preview: document.querySelector('#preview-button'),
+  save: document.querySelector('#save-button'),
+  regenerate: document.querySelector('#regenerate-button'),
+  load: document.querySelector('#load-button'),
+  workspace: document.querySelector('#bracket-workspace'),
+  title: document.querySelector('#workspace-title'),
+  status: document.querySelector('#status-message'),
+};
+
+const requestedSport = new URLSearchParams(location.search).get('sport');
+const GROUP_BRACKET_SPORTS = new Set(['futsal', 'chess', 'table-tennis']);
+const groupBracketMode = GROUP_BRACKET_SPORTS.has(requestedSport);
+const publicSportLink = document.querySelector('#public-sport-link');
+let activeBracket = null;
+
+if (groupBracketMode) {
+  document.body.classList.add('group-bracket-mode');
+  elements.title.textContent = 'Memuat bracket hasil grup…';
+  elements.status.textContent = 'Peserta diambil otomatis dari hasil Group Standing.';
+  elements.workspace.innerHTML = '<div class="empty-state"><strong>Memuat bracket…</strong><span>Peserta berasal dari hasil kelolosan grup.</span></div>';
+}
+if (requestedSport && publicSportLink) publicSportLink.href = `${requestedSport}.html#bracket`;
+
+const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, character => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
+}[character]));
+
+function setStatus(message, type = '') {
+  elements.status.textContent = message;
+  elements.status.className = type;
+}
+
+async function api(path, options = {}) {
+  if (path.startsWith('/admin/')) return adminRequest(path, options);
+  if (!API_BASE) throw new Error('URL backend belum dikonfigurasi.');
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers: { 'Content-Type': 'application/json', ...options.headers },
+  });
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) throw new Error(payload?.message || `Request gagal (${response.status})`);
+  return payload;
+}
+
+function participantPayload() {
+  return elements.participants.value
+    .split('\n')
+    .map(name => name.trim())
+    .filter(Boolean)
+    .map((name, index) => ({ id: `entry-${index + 1}`, name }));
+}
+
+function updateParticipantSummary() {
+  const count = participantPayload().length;
+  elements.summary.textContent = `${count} peserta`;
+}
+
+function dateTimeLocalValue(value) {
+  return value ? value.slice(0, 16) : '';
+}
+
+function renderBracket(bracket, source) {
+  activeBracket = bracket;
+  elements.title.textContent = `${bracket.participantCount} peserta • ${bracket.bracketSize} slot • ${bracket.byeCount} BYE`;
+  const visibleRounds = bracket.thirdPlaceMatch
+    ? [...bracket.rounds, { name: 'Perebutan Juara 3', matches: [bracket.thirdPlaceMatch] }]
+    : bracket.rounds;
+  const rounds = visibleRounds.map(round => `
+    <section class="admin-round">
+      <h3>${escapeHtml(round.name.toUpperCase())}</h3>
+      <div class="admin-matches">
+        ${round.matches.map(match => {
+          const home = match.homeParticipant?.name || 'Menunggu hasil';
+          const away = match.awayParticipant?.name || (match.status === 'bye' ? 'BYE' : 'Menunggu hasil');
+          const resultDisabled = !['scheduled', 'completed'].includes(match.status);
+          const scheduleDisabled = match.status === 'bye';
+          return `
+            <article class="admin-match" data-match-id="${escapeHtml(match.id)}">
+              <div class="match-id"><span>${escapeHtml(match.id)}</span><b class="status-pill ${escapeHtml(match.status)}">${escapeHtml(match.status)}</b></div>
+              <div class="team-line"><strong>${escapeHtml(home)}</strong><input class="home-score" type="number" min="0" value="${match.homeScore ?? ''}" aria-label="Skor ${escapeHtml(home)}"></div>
+              <div class="team-line"><strong class="${away === 'BYE' ? 'bye-label' : ''}">${escapeHtml(away)}</strong><input class="away-score" type="number" min="0" value="${match.awayScore ?? ''}" aria-label="Skor ${escapeHtml(away)}"></div>
+              <div class="match-tools">
+                <div class="schedule-fields">
+                  <input class="scheduled-at" type="datetime-local" value="${dateTimeLocalValue(match.scheduledAt)}" aria-label="Tanggal dan waktu ${escapeHtml(match.id)}">
+                  <input class="venue" type="text" maxlength="150" value="${escapeHtml(match.venue || '')}" placeholder="Venue" aria-label="Venue ${escapeHtml(match.id)}">
+                </div>
+                <button class="schedule-button" type="button" ${scheduleDisabled ? 'disabled' : ''}>Simpan jadwal</button>
+                <button class="result-button ${match.status === 'completed' ? 'correct' : ''}" type="button" ${resultDisabled ? 'disabled' : ''}>${match.status === 'completed' ? 'Koreksi skor' : 'Simpan hasil'}</button>
+              </div>
+            </article>`;
+        }).join('')}
+      </div>
+    </section>`).join('');
+
+  const champion = bracket.participants.find(item => item.id === bracket.championParticipantId)?.name || 'Menunggu hasil';
+  elements.workspace.innerHTML = `<div class="admin-rounds">${rounds}<aside class="champion-admin"><small>PEMENANG</small><strong>${escapeHtml(champion)}</strong></aside></div>`;
+  setStatus(`Bracket ${source} berhasil dimuat.`, 'success');
+}
+
+async function loadTournaments() {
+  const slug = elements.sport.value;
+  const payload = await api(`/sports/${slug}/tournaments`);
+  elements.tournament.innerHTML = payload.data
+    .filter(item => item.format.includes('single_elimination'))
+    .map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`)
+    .join('');
+  const disabled = elements.tournament.options.length === 0;
+  [elements.preview, elements.save, elements.regenerate, elements.load].forEach(button => { button.disabled = disabled; });
+  if (disabled) setStatus('Turnamen ini belum mendukung bracket single elimination.', 'error');
+  else setStatus('Turnamen siap dikelola.');
+}
+
+async function initialize() {
+  try {
+    const payload = await api('/sports');
+    elements.sport.innerHTML = payload.data
+      .filter(sport => groupBracketMode
+        ? sport.slug === requestedSport
+        : ['badminton', 'football'].includes(sport.slug))
+      .map(sport => `<option value="${escapeHtml(sport.slug)}">${escapeHtml(sport.name)}</option>`)
+      .join('');
+    if (requestedSport && [...elements.sport.options].some(option => option.value === requestedSport)) elements.sport.value = requestedSport;
+    await loadTournaments();
+    if (requestedSport) await loadSavedBracket();
+  } catch (error) {
+    const message = groupBracketMode && /not found|belum|tidak ditemukan/i.test(error.message)
+      ? 'Bracket belum dibuat. Tentukan kelolosan dari Group Standing terlebih dahulu.'
+      : error.message;
+    setStatus(message, 'error');
+    if (groupBracketMode) elements.workspace.innerHTML = '<div class="empty-state"><strong>Bracket belum tersedia</strong><span>Buat bracket dari halaman Group Standing.</span></div>';
+    [elements.preview, elements.save, elements.regenerate, elements.load].forEach(button => { button.disabled = true; });
+  }
+}
+
+async function previewBracket() {
+  const tournamentId = elements.tournament.value;
+  setStatus('Membuat preview…');
+  try {
+    const payload = await api(`/admin/tournaments/${tournamentId}/bracket/preview`, {
+      method: 'POST',
+      body: JSON.stringify({ participants: participantPayload() }),
+    });
+    renderBracket(payload.data.bracket, 'preview');
+  } catch (error) { setStatus(error.message, 'error'); }
+}
+
+async function saveBracket() {
+  const tournamentId = elements.tournament.value;
+  setStatus('Menyimpan bracket…');
+  try {
+    const payload = await api(`/admin/tournaments/${tournamentId}/bracket`, {
+      method: 'POST',
+      body: JSON.stringify({ participants: participantPayload() }),
+    });
+    renderBracket(payload.data, 'tersimpan');
+  } catch (error) { setStatus(error.message, 'error'); }
+}
+
+async function regenerateBracket() {
+  if (!confirm('Regenerate akan menghapus seluruh skor, jadwal, progres, dan juara pada bracket lama. Lanjutkan?')) return;
+  const tournamentId = elements.tournament.value;
+  setStatus('Membuat ulang bracket…');
+  try {
+    const payload = await api(`/admin/tournaments/${tournamentId}/bracket`, {
+      method: 'PUT',
+      body: JSON.stringify({ participants: participantPayload(), confirmReplace: true }),
+    });
+    renderBracket(payload.data, 'hasil regenerate');
+  } catch (error) { setStatus(error.message, 'error'); }
+}
+
+async function loadSavedBracket() {
+  const tournamentId = elements.tournament.value;
+  setStatus('Memuat bracket…');
+  try {
+    const payload = await api(`/tournaments/${tournamentId}/bracket`);
+    elements.participants.value = payload.data.participants.map(item => item.name).join('\n');
+    updateParticipantSummary();
+    renderBracket(payload.data, 'tersimpan');
+  } catch (error) { setStatus(error.message, 'error'); }
+}
+
+elements.workspace.addEventListener('click', async event => {
+  const card = event.target.closest('.admin-match');
+  if (!card) return;
+  const tournamentId = elements.tournament.value;
+  const matchId = card.dataset.matchId;
+
+  if (event.target.closest('.schedule-button')) {
+    const localDate = card.querySelector('.scheduled-at').value;
+    const venue = card.querySelector('.venue').value.trim();
+    const scheduledAt = localDate ? `${localDate}:00+07:00` : '';
+    setStatus(`Menyimpan jadwal ${matchId}…`);
+    try {
+      const payload = await api(`/admin/tournaments/${tournamentId}/matches/${matchId}/schedule`, {
+        method: 'PATCH', body: JSON.stringify({ scheduledAt, venue }),
+      });
+      renderBracket(payload.data.bracket, 'setelah pembaruan jadwal');
+    } catch (error) { setStatus(error.message, 'error'); }
+  }
+
+  if (event.target.closest('.result-button')) {
+    const homeScore = Number(card.querySelector('.home-score').value);
+    const awayScore = Number(card.querySelector('.away-score').value);
+    const method = activeBracket.rounds.flatMap(round => round.matches).find(match => match.id === matchId)?.status === 'completed' ? 'PUT' : 'PATCH';
+    setStatus(`${method === 'PUT' ? 'Mengoreksi' : 'Menyimpan'} hasil ${matchId}…`);
+    try {
+      const payload = await api(`/admin/tournaments/${tournamentId}/matches/${matchId}/result`, {
+        method, body: JSON.stringify({ homeScore, awayScore }),
+      });
+      renderBracket(payload.data.bracket, 'setelah pembaruan hasil');
+    } catch (error) { setStatus(error.message, 'error'); }
+  }
+});
+
+elements.participants.addEventListener('input', updateParticipantSummary);
+elements.sport.addEventListener('change', async () => {
+  elements.participants.value = '';
+  updateParticipantSummary();
+  try { await loadTournaments(); }
+  catch (error) { setStatus(error.message, 'error'); }
+});
+elements.preview.addEventListener('click', previewBracket);
+elements.save.addEventListener('click', saveBracket);
+elements.regenerate.addEventListener('click', regenerateBracket);
+elements.load.addEventListener('click', loadSavedBracket);
+
+const identity = await requireAdmin();
+if (identity) {
+  document.querySelector('#logout-button').addEventListener('click', () => {
+    clearAdminSession();
+    location.replace('admin-login.html');
+  });
+  updateParticipantSummary();
+  initialize();
+}

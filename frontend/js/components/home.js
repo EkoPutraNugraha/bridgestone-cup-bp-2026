@@ -1,22 +1,102 @@
-import { dates, gallery, greetings, sports, supporters } from '../data/home-data.js?v=20260807-support-arrows';
+import { sports } from '../data/home-data.js?v=20260809-live-only';
 
-const greetingCard = item => `<article class="greeting-card"><div class="portrait"><img src="assets/images/portrait-head.svg" alt=""><i></i><span>${item.initials}</span><b>BP</b></div><h3>${item.name}</h3><strong>${item.role}</strong><blockquote>“<p>${item.message}</p></blockquote><small>BRIDGESTONE CUP BP 2026</small></article>`;
-const scheduleCard = sport => sport.name === 'FISHING' ? `<a class="schedule-card fishing" href="#sports"><header><span>${sport.code}</span><h3>${sport.name}</h3></header><div class="fishing-panel"><time><b>13</b><small>DESEMBER</small></time><label>LOKASI</label><p>Empang Ikan Mas Bungur</p><label>WAKTU</label><strong>07.00 WIB</strong></div><div class="final-event">FINAL EVENT<br>Timbang hasil tangkapan</div></a>` : `<a class="schedule-card" href="#sports"><header><span>${sport.code}</span><h3>${sport.name}</h3></header>${dates.map((date,i) => `<div class="schedule-row${i===0?' current':''}"><time datetime="2026-12-${String(date).padStart(2,'0')}"><b>${date}</b><small>DES</small></time><p>Cafetaria<small>${i===4?'16.45':'16.30'} WIB</small></p></div>`).join('')}</a>`;
+const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, character => ({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;' }[character]));
+const initials = name => name.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join('').toUpperCase();
+const emptySection = (title, message) => `<div class="home-empty-state"><strong>${title}</strong><span>${message}</span></div>`;
+const greetingCard = item => { const english = document.documentElement.lang === 'en'; const role = english ? (item.roleEn || item.role || item.roleId) : (item.roleId || item.role); const message = english ? (item.messageEn || item.message || item.messageId) : (item.messageId || item.message); return `<article class="greeting-card">${item.photoUrl ? `<div class="portrait live"><img src="${escapeHtml(item.photoUrl)}" alt="${english ? 'Photo of' : 'Foto'} ${escapeHtml(item.name)}"></div>` : `<div class="portrait"><img src="assets/images/portrait-head.svg" alt=""><i></i><span>${escapeHtml(item.initials || initials(item.name))}</span><b>BP</b></div>`}<h3>${escapeHtml(item.name)}</h3><strong>${escapeHtml(role)}</strong><blockquote>“<p>${escapeHtml(message)}</p></blockquote><small>BRIDGESTONE CUP BP 2026</small></article>`; };
+
+export function renderGreetings(items = [], source = 'empty') {
+  const list = document.querySelector('#greeting-list');
+  list.dataset.source = source;
+  list.innerHTML = items.length
+    ? items.map(greetingCard).join('')
+    : emptySection('GREETING BELUM TERSEDIA', 'Sambutan akan tampil setelah dipublikasikan oleh admin.');
+}
+
+const supporterImages = {
+  'PRODUCTION TEAM':'assets/images/support-production.png',
+  'QA TEAM':'assets/images/support-qa.png',
+  'MAINTENANCE TEAM':'assets/images/support-maintenance.png',
+};
+
+export function renderSupporters(items = [], source = 'empty') {
+  const list = document.querySelector('#support-list');
+  list.dataset.source = source;
+  list.innerHTML = items.length
+    ? items.map(item => {
+      const team = String(item.team || 'OTHER TEAM').trim().replace(/\s+/g, ' ').toUpperCase();
+      const count = Number(item.count) || 0;
+      return `<article><b>${item.rank}</b><img src="${supporterImages[team] || 'assets/images/support-icon.png'}" alt=""><h4>${escapeHtml(team)}</h4><p>${count} Support Card${count === 1 ? '' : 's'}</p></article>`;
+    }).join('')
+    : emptySection('LEADERBOARD BELUM TERSEDIA', 'Peringkat supporter akan tampil setelah support card dipublikasikan.');
+}
+
 const sportLinks = {
   BADMINTON: 'pages/badminton.html',
   FUTSAL: 'pages/futsal.html',
   CHESS: 'pages/chess.html',
   'TABLE TENNIS': 'pages/table-tennis.html',
   FOOTBALL: 'pages/football.html',
-  FISHING: 'pages/fishing.html'
+  FISHING: 'pages/fishing.html',
 };
-const sportCard = (sport, index) => `<a class="sport-card${index===0?' active':''}" href="${sportLinks[sport.name] || '#sports'}" aria-label="Buka ${sport.name}"><img src="assets/images/${index===0?'card-ornament-active':'card-ornament'}.svg" alt=""><small>0${index + 1}</small><i></i><h3>${sport.name}</h3><b>${sport.count}</b></a>`;
+const scheduleLinks = Object.fromEntries(Object.entries(sportLinks).map(([name, url]) => [name, `${url}#schedule`]));
+
+const emptyScheduleCard = sport => sport.name === 'FISHING'
+  ? `<a class="schedule-card fishing" data-source="event" href="${sportLinks.FISHING}"><header><span>${sport.code}</span><h3>${sport.name}</h3></header><div class="fishing-panel"><time><b>13</b><small>DESEMBER</small></time><label>LOKASI</label><p>Empang Ikan Mas Bungur</p><label>WAKTU</label><strong>07.00 WIB</strong></div><div class="final-event">FINAL EVENT<br>Timbang hasil tangkapan</div></a>`
+  : `<a class="schedule-card schedule-card-empty" data-source="empty" href="${scheduleLinks[sport.name] || '#sports'}"><header><span>${sport.code}</span><h3>${sport.name}</h3></header><div class="schedule-empty"><strong>JADWAL BELUM TERSEDIA</strong><span>Akan tampil setelah disimpan oleh admin.</span></div></a>`;
+
+const liveScheduleCard = (sport, matches) => `<a class="schedule-card" data-source="api" href="${scheduleLinks[sport.name] || '#sports'}"><header><span>${sport.code}</span><h3>${sport.name}</h3></header>${matches.slice(0, 5).map((match, index) => {
+  const scheduledAt = new Date(match.scheduledAt);
+  const day = new Intl.DateTimeFormat('id-ID', { day:'2-digit', timeZone:'Asia/Jakarta' }).format(scheduledAt);
+  const month = new Intl.DateTimeFormat('id-ID', { month:'short', timeZone:'Asia/Jakarta' }).format(scheduledAt).replace('.', '').toUpperCase();
+  const time = new Intl.DateTimeFormat('id-ID', { hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Asia/Jakarta' }).format(scheduledAt).replace('.', ':');
+  return `<div class="schedule-row${index === 0 ? ' current' : ''}"><time datetime="${escapeHtml(match.scheduledAt)}"><b>${day}</b><small>${month}</small></time><p>${escapeHtml(match.venue || 'Venue menunggu')}<small>${time} WIB</small></p></div>`;
+}).join('')}</a>`;
+
+export function renderSchedules(scheduleBySport = {}) {
+  const list = document.querySelector('#schedule-list');
+  list.innerHTML = sports.map(sport => {
+    const matches = scheduleBySport[sport.name] || [];
+    return matches.length ? liveScheduleCard(sport, matches) : emptyScheduleCard(sport);
+  }).join('');
+}
+
+const sportCard = (sport, index, counts = {}) => `<a class="sport-card" data-source="${counts[sport.name] ? 'api' : 'empty'}" href="${sportLinks[sport.name] || '#sports'}" aria-label="Buka ${sport.name}"><img src="assets/images/card-ornament.svg" alt=""><small>0${index + 1}</small><i></i><h3>${sport.name}</h3><b>${escapeHtml(counts[sport.name] || 'DATA MENUNGGU')}</b></a>`;
+
+export function renderSports(counts = {}) {
+  document.querySelector('#sports-list').innerHTML = sports.map((sport, index) => sportCard(sport, index, counts)).join('');
+}
+
+export function renderGalleryPreview(items = [], source = 'empty') {
+  const list = document.querySelector('#gallery-list');
+  list.dataset.source = source;
+  const itemsBySport = new Map();
+  items.filter(item => item.sportId).forEach(item => {
+    if (!itemsBySport.has(item.sportId)) itemsBySport.set(item.sportId, []);
+    itemsBySport.get(item.sportId).push(item);
+  });
+  const sportGroups = [...itemsBySport.entries()];
+  for (let index = sportGroups.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [sportGroups[index], sportGroups[randomIndex]] = [sportGroups[randomIndex], sportGroups[index]];
+  }
+  const selectedItems = sportGroups.slice(0, 3).map(([, sportItems]) => sportItems[Math.floor(Math.random() * sportItems.length)]);
+  const cards = Array.from({ length:3 }, (_, index) => {
+    const item = selectedItems[index];
+    if (!item) return `<article class="gallery-preview-empty"><small>0${index + 1}</small><strong>FOTO BELUM TERSEDIA</strong><span>Upload foto cabor lain dari halaman admin Gallery.</span></article>`;
+    const slug = String(item.sportId || '').replace(/^sport-/, '');
+    const english = document.documentElement.lang === 'en';
+    const title = english ? (item.titleEn || item.titleId || 'TOURNAMENT MOMENT') : (item.titleId || 'MOMEN TURNAMEN');
+    const link = slug ? `pages/gallery-sport.html?sport=${encodeURIComponent(slug)}` : 'pages/gallery.html';
+    return `<a href="${link}"><article class="live"><img src="${escapeHtml(item.publicUrl)}" alt="${escapeHtml(english ? (item.altEn || item.altId || title) : (item.altId || title))}"><small>0${index + 1}</small><h3>${escapeHtml(title)}</h3></article></a>`;
+  });
+  list.innerHTML = cards.join('');
+}
 
 export function renderHome() {
-  document.querySelector('#greeting-list').innerHTML = greetings.map(greetingCard).join('');
-  document.querySelector('#schedule-list').innerHTML = sports.map(scheduleCard).join('');
-  document.querySelector('#sports-list').innerHTML = sports.map(sportCard).join('');
-  const galleryLinks = ['pages/gallery.html', 'pages/gallery-sport.html?sport=futsal', 'pages/gallery-sport.html?sport=chess'];
-  document.querySelector('#gallery-list').innerHTML = gallery.map((item, i) => `<a href="${galleryLinks[i]}"><article><small>0${i + 1}</small><h3>${item}</h3></article></a>`).join('');
-  document.querySelector('#support-list').innerHTML = supporters.map(item => `<article><b>${item.rank}</b><img src="${item.image}" alt=""><h4>${item.team}</h4><p>${item.count} Support Cards</p></article>`).join('');
+  renderGreetings();
+  renderSchedules();
+  renderSports();
+  renderGalleryPreview();
+  renderSupporters();
 }

@@ -1,3 +1,4 @@
+import './public-i18n.js?v=20260809-public-i18n';
 import { advancedMatches, badmintonSchedule, openingMatches } from './data/badminton-data.js';
 
 const menuButton = document.querySelector('.sports-menu-toggle');

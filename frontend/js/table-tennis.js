@@ -1,1 +1,62 @@
-import{shell,standingView,bracketView}from'./sports.js';const host=document.querySelector('#sport-view');const teams=['ALPHA WORKS','BLACKSTONE','CROWN UNION','DORADO CLUB','EASTFIELD','FORGE HOUSE','GOLDEN ERA','HERITAGE','IRONWOOD','JUNCTION','KINGSMEN','LEGACY CO.','MONARCH','NORTHSTAR','ONYX CLUB','PRESTIGE'].map((x,i)=>[x,[2,1,3,0][i%4]]);const groups=Array.from({length:4},(_,i)=>teams.slice(i*4,i*4+4).map((x,j)=>[x[0],6-j]));const scores=[['MEJA 1','GRUP A VS GRUP C','1 - 2'],['MEJA 2','GRUP B VS GRUP D','2 - 1'],['MEJA 1','GRUP A VS GRUP B','1 - 2'],['MEJA 2','GRUP C VS GRUP D','2 - 0']];const winner=()=>`<section class="score-layout"><article class="score-panel"><h2>MATCH SCORE</h2>${scores.map(x=>`<div class="score-row"><small>${x[0]}</small><strong>${x[1]}</strong><b>${x[2]}</b></div>`).join('')}</article><article class="winner-panel"><h2>TABLE TENNIS WINNERS</h2>${['GRUP B','GRUP A','GRUP C'].map((x,i)=>`<div class="ranking-row"><small>JUARA ${i+1}</small><strong>${x}</strong><b>0${i+1}</b></div>`).join('')}</article></section>`;shell('Table Tennis',[{id:'bracket',label:'Bracket'},{id:'group-standing',label:'Group Standing'},{id:'winner',label:'Winner Table Tennis'}],id=>host.innerHTML=id==='bracket'?bracketView('CHAMPIONSHIP BRACKET',teams,'GOLDEN ERA'):id==='group-standing'?standingView(groups):winner());
+import './public-i18n.js?v=20260809-public-i18n';
+import { API_BASE as apiBase } from './api-config.js';
+import {
+  apiBracketView,
+  bracketWinnerView,
+  shell,
+  standingView,
+} from './sports.js?v=20260808-live-only';
+
+const host = document.querySelector('#sport-view');
+let groups = [];
+let liveBracket = null;
+let standingSource = 'empty';
+let bracketSource = 'empty';
+
+const emptyState = (title, message) => `
+  <div class="public-empty-state">
+    <strong>${title}</strong>
+    <span>${message}</span>
+  </div>`;
+
+function render(id) {
+  if (id === 'group-standing') {
+    host.dataset.source = standingSource;
+    host.innerHTML = standingView(groups);
+    return;
+  }
+  host.dataset.source = bracketSource;
+  if (id === 'winner') {
+    host.innerHTML = liveBracket
+      ? bracketWinnerView('TABLE TENNIS WINNERS', liveBracket)
+      : emptyState('HASIL BELUM TERSEDIA', 'Pemenang Table Tennis akan tampil setelah bracket disimpan dan pertandingan selesai.');
+    return;
+  }
+  host.innerHTML = liveBracket
+    ? apiBracketView('TABLE TENNIS CHAMPIONSHIP BRACKET', liveBracket)
+    : emptyState('BRACKET BELUM TERSEDIA', 'Bracket Table Tennis akan tampil setelah dibuat dari Group Standing.');
+}
+
+shell('Table Tennis', [
+  { id: 'group-standing', label: 'Group Standing' },
+  { id: 'bracket', label: 'Bracket' },
+  { id: 'winner', label: 'Winner Table Tennis' },
+], render);
+
+if (apiBase) {
+  Promise.allSettled([
+    fetch(`${apiBase}/tournaments/table-tennis-bp-2026/standings`).then(response => response.ok ? response.json() : Promise.reject()),
+    fetch(`${apiBase}/tournaments/table-tennis-bp-2026/bracket`).then(response => response.ok ? response.json() : Promise.reject()),
+  ]).then(([standingResult, bracketResult]) => {
+    const standingData = standingResult.status === 'fulfilled' ? standingResult.value.data : null;
+    if (standingData?.length) {
+      groups = standingData.map(group => group.rows.map(row => [row.name, row.points]));
+      standingSource = 'api';
+    }
+    if (bracketResult.status === 'fulfilled' && bracketResult.value.data) {
+      liveBracket = bracketResult.value.data;
+      bracketSource = 'api';
+    }
+    render(location.hash.slice(1) || 'group-standing');
+  });
+}

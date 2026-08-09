@@ -1,0 +1,1 @@
+import{clearAdminSession,requireAdmin}from'./admin-auth.js';const admin=await requireAdmin();if(admin)document.querySelector('#logout-button').onclick=()=>{clearAdminSession();location.replace('admin-login.html')};
