@@ -82,6 +82,7 @@ export function renderGalleryPreview(items = [], source = 'empty') {
   }
   const selectedItems = sportGroups.slice(0, 3).map(([, sportItems]) => sportItems[Math.floor(Math.random() * sportItems.length)]);
   list.dataset.count = String(selectedItems.length);
+  list.closest('#gallery')?.setAttribute('data-gallery-count', String(selectedItems.length));
   if (!selectedItems.length) {
     list.innerHTML = '<article class="gallery-preview-empty"><strong>FOTO BELUM TERSEDIA</strong><span>Foto akan tampil setelah dipublikasikan melalui Admin Gallery.</span></article>';
     return;
