@@ -1,6 +1,6 @@
 import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE as apiBase } from './api-config.js';
-import { renderGalleryPreview, renderHome, renderGreetings, renderSchedules, renderSports, renderSupporters } from './components/home.js?v=20260811-category-schedules-2';
+import { renderGalleryPreview, renderHome, renderGreetings, renderSchedules, renderSports, renderSupporters } from './components/home.js?v=20260811-scrollable-schedules';
 
 renderHome();
 

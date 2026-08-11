@@ -60,18 +60,22 @@ a,button{font:inherit}
 .greeting-card blockquote{display:flex;height:187px;margin:11px 17px 0;padding-top:9px;border-top:1px solid var(--line);color:var(--bright);font-size:40px;text-align:left}
 .greeting-card blockquote p{margin:9px 0 0 0;color:#ebebeb;font-size:13px;line-height:20px}
 .greeting-card small{position:absolute;right:18px;bottom:24px;color:var(--muted);font-size:10px;font-weight:700}
-.schedule-grid{position:absolute;z-index:1;top:278px;left:50px;right:70px;display:grid;grid-template-columns:repeat(6,205px);gap:18px}
-.schedule-card{width:205px;height:540px;color:inherit;text-decoration:none;background:#0b0c0b;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.schedule-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(6,205px);gap:18px;margin-top:55px}
+.schedule-card{width:205px;height:auto;min-height:540px;color:inherit;text-decoration:none;background:#0b0c0b;border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .schedule-card header{height:82px;display:flex;align-items:center;gap:10px;padding:14px;background:linear-gradient(90deg,#291f09,#090a09);border-bottom:1px solid var(--line)}
 .schedule-card header span{display:grid;place-items:center;width:48px;height:48px;flex:0 0 48px;border:1px solid var(--bright);border-radius:10px;background:#0f0e09;color:var(--bright);font-size:18px;font-weight:700}
 .schedule-card h3{margin:0;font-size:15px}
-.schedule-row{height:68px;display:flex;gap:10px;margin:12px 11px 14px;padding:10px 8px;background:#060707;border-radius:9px}
+.schedule-rows{max-height:444px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--gold) #111}
+.schedule-rows::-webkit-scrollbar{width:6px}
+.schedule-rows::-webkit-scrollbar-track{background:#111}
+.schedule-rows::-webkit-scrollbar-thumb{border-radius:999px;background:var(--gold)}
+.schedule-row{height:auto;min-height:68px;display:flex;gap:10px;margin:12px 11px 14px;padding:10px 8px;background:#060707;border-radius:9px}
 .schedule-row.current{background:linear-gradient(90deg,#2b1f06,#090a09);border:1px solid var(--line)}
 .schedule-row time{display:grid;place-items:center;width:46px;height:48px;border:1px solid var(--line);border-radius:8px;color:var(--bright);background:#0f0f0e;text-align:center}
 .schedule-row.current time{background:var(--bright);color:#060707}
 .schedule-row b{font-size:18px;line-height:18px}
 .schedule-row small{display:block;font-size:9px}
-.schedule-row p{margin:4px 0;color:#ebebeb;font-size:12px;font-weight:700;line-height:20px}
+.schedule-row p{min-width:0;margin:4px 0;color:#ebebeb;font-size:12px;font-weight:700;line-height:20px;overflow-wrap:anywhere}
 .schedule-row p small{color:var(--bright);font-size:11px}
 .schedule-category{display:block;margin-bottom:2px;color:#dba824;font-size:8px;font-style:normal;letter-spacing:.08em;line-height:1.1}
 .fishing-panel{height:330px;margin:13px 11px 0;padding:25px 12px;text-align:center;border:1px solid var(--line);border-radius:12px;background:#060707}
@@ -442,13 +446,14 @@ main::before{inset:8px;border-radius:16px}
   .greeting-card blockquote p{font-size:11px;line-height:17px}
   .greeting-card small{right:16px;bottom:20px;font-size:8px}
 
-  #schedule{height:1160px;padding-top:48px}
+  #schedule{height:auto;min-height:1160px;padding-top:48px;padding-bottom:48px}
   .schedule-grid{display:grid;grid-template-columns:repeat(2,120px);justify-content:space-between;gap:26px 0;width:294px;margin:36px auto 0}
-  .schedule-card{width:120px;min-height:0;height:316px;border-radius:8px}
+  .schedule-card{width:120px;min-height:316px;height:auto;border-radius:8px}
   .schedule-card header{height:48px;gap:6px;padding:8px}
   .schedule-card header span{width:28px;height:28px;flex-basis:28px;border-radius:6px;font-size:11px}
   .schedule-card h3{font-size:9px}
-  .schedule-row{height:40px;gap:6px;margin:7px 6px 8px;padding:6px 5px;border-radius:5px}
+  .schedule-rows{max-height:260px}
+  .schedule-row{height:auto;min-height:40px;gap:6px;margin:7px 6px 8px;padding:6px 5px;border-radius:5px}
   .schedule-row time{width:27px;height:28px;border-radius:5px}
   .schedule-row b{font-size:11px;line-height:10px}
   .schedule-row small{font-size:6px}
