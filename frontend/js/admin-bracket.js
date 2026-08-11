@@ -188,7 +188,15 @@ async function loadSavedBracket() {
     elements.participants.value = payload.data.participants.map(item => item.name).join('\n');
     updateParticipantSummary();
     renderBracket(payload.data, 'tersimpan');
-  } catch (error) { setStatus(error.message, 'error'); }
+  } catch (error) {
+    if (/bracket not found|tidak ditemukan/i.test(error.message)) {
+      activeBracket = null;
+      setStatus('Bracket belum tersimpan. Isi peserta, lalu pilih Preview atau Simpan.');
+      elements.workspace.innerHTML = '<div class="empty-state"><strong>Bracket belum tersedia</strong><span>Isi peserta lalu pilih Preview atau Simpan.</span></div>';
+      return;
+    }
+    setStatus(error.message, 'error');
+  }
 }
 
 elements.workspace.addEventListener('click', async event => {
@@ -213,6 +221,10 @@ elements.workspace.addEventListener('click', async event => {
   if (event.target.closest('.result-button')) {
     const homeScore = Number(card.querySelector('.home-score').value);
     const awayScore = Number(card.querySelector('.away-score').value);
+    if (homeScore === awayScore) {
+      setStatus('Skor tidak boleh seri pada pertandingan eliminasi. Tentukan salah satu pemenang.', 'error');
+      return;
+    }
     const method = activeBracket.rounds.flatMap(round => round.matches).find(match => match.id === matchId)?.status === 'completed' ? 'PUT' : 'PATCH';
     setStatus(`${method === 'PUT' ? 'Mengoreksi' : 'Menyimpan'} hasil ${matchId}…`);
     try {
