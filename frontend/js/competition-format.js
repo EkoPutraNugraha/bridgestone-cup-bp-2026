@@ -9,6 +9,12 @@ export async function loadCompetitionFormat(sport) {
   try{const response=await fetch(`${API_BASE}/tournaments/${tournamentIds[sport]}/competition-format`);if(!response.ok)return fallback;return(await response.json()).data||fallback}catch{return fallback}
 }
 
+export async function loadTournamentCompetitionFormat(tournamentId, fallbackUsesGroup = false) {
+  const fallback={format:fallbackUsesGroup?'group_and_single_elimination':'single_elimination',usesGroupStage:Boolean(fallbackUsesGroup)};
+  if(!API_BASE||!tournamentId)return fallback;
+  try{const response=await fetch(`${API_BASE}/tournaments/${tournamentId}/competition-format`);if(!response.ok)return fallback;return(await response.json()).data||fallback}catch{return fallback}
+}
+
 export function withOptionalStanding(format, tabs) {
   return [...(format.usesGroupStage?[{id:'group-standing',label:'Group Standing'}]:[]),...tabs];
 }

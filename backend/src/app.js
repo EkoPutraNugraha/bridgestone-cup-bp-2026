@@ -17,6 +17,7 @@ import { adminSupportRouter, publicSupportRouter } from "./modules/support/suppo
 import { adminAnnouncementsRouter, publicAnnouncementsRouter } from "./modules/announcements/announcements.routes.js";
 import { adminStandingsRouter, publicStandingsRouter } from "./modules/standings/standings.routes.js";
 import { adminFishingRouter, publicFishingRouter } from "./modules/fishing/fishing.routes.js";
+import { adminCompetitionCategoriesRouter, publicCompetitionCategoriesRouter } from "./modules/competition-categories/competition-categories.routes.js";
 
 export function createApp({ bracketAuthentication } = {}) {
   const app = express();
@@ -50,11 +51,13 @@ app.use("/api/admin/announcements", adminAnnouncementsRouter);
 app.use("/api/announcements", publicAnnouncementsRouter);
 app.use("/api/admin", adminStandingsRouter);
 app.use("/api/admin", adminTournamentsRouter);
+app.use("/api/admin", adminCompetitionCategoriesRouter);
 app.use("/api/admin", adminFishingRouter);
 app.use("/api/admin", createBracketsRouter(bracketAuthentication));
 app.use("/api/tournaments", publicBracketsRouter);
 app.use("/api/tournaments", matchesRouter);
 app.use("/api/sports", sportsRouter);
+app.use("/api/sports", publicCompetitionCategoriesRouter);
 app.use("/api/tournaments", tournamentsRouter);
 app.use("/api/tournaments", publicStandingsRouter);
 app.use("/api/tournaments", publicFishingRouter);

@@ -14,7 +14,9 @@ const elements = {
   status: document.querySelector('#status-message'),
 };
 
-const requestedSport = new URLSearchParams(location.search).get('sport');
+const query = new URLSearchParams(location.search);
+const requestedSport = query.get('sport');
+const requestedTournament = query.get('tournament');
 let groupBracketMode = false;
 const publicSportLink = document.querySelector('#public-sport-link');
 let activeBracket = null;
@@ -111,6 +113,9 @@ async function loadTournaments() {
     .filter(item => item.format.includes('single_elimination'))
     .map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`)
     .join('');
+  if (requestedTournament && [...elements.tournament.options].some(option => option.value === requestedTournament)) {
+    elements.tournament.value = requestedTournament;
+  }
   const disabled = elements.tournament.options.length === 0;
   [elements.preview, elements.save, elements.regenerate, elements.load].forEach(button => { button.disabled = disabled; });
   if (disabled) setStatus('Turnamen ini belum mendukung bracket single elimination.', 'error');
@@ -119,7 +124,7 @@ async function loadTournaments() {
 
 async function initialize() {
   try {
-    if(requestedSport){const format=await api(`/tournaments/${requestedSport}-bp-2026/competition-format`);groupBracketMode=Boolean(format.data?.usesGroupStage);applyGroupBracketMode()}
+    if(requestedSport){const format=await api(`/tournaments/${requestedTournament||`${requestedSport}-bp-2026`}/competition-format`);groupBracketMode=Boolean(format.data?.usesGroupStage);applyGroupBracketMode()}
     const payload = await api('/sports');
     elements.sport.innerHTML = payload.data
       .filter(sport => requestedSport ? sport.slug === requestedSport : sport.slug !== 'fishing')

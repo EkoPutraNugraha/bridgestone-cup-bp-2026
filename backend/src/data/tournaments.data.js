@@ -2,7 +2,15 @@ export const tournaments = Object.freeze([
   {
     id: "badminton-bp-2026",
     sportId: "sport-badminton",
-    name: "Badminton Bridgestone Cup BP 2026",
+    name: "Badminton Doubles Bridgestone Cup BP 2026",
+    format: "single_elimination",
+    status: "published",
+    timezone: "Asia/Jakarta",
+  },
+  {
+    id: "badminton-singles-bp-2026",
+    sportId: "sport-badminton",
+    name: "Badminton Singles Bridgestone Cup BP 2026",
     format: "single_elimination",
     status: "published",
     timezone: "Asia/Jakarta",
@@ -26,7 +34,15 @@ export const tournaments = Object.freeze([
   {
     id: "table-tennis-bp-2026",
     sportId: "sport-table-tennis",
-    name: "Table Tennis Bridgestone Cup BP 2026",
+    name: "Table Tennis Singles Bridgestone Cup BP 2026",
+    format: "single_elimination",
+    status: "published",
+    timezone: "Asia/Jakarta",
+  },
+  {
+    id: "table-tennis-doubles-bp-2026",
+    sportId: "sport-table-tennis",
+    name: "Table Tennis Doubles Bridgestone Cup BP 2026",
     format: "single_elimination",
     status: "published",
     timezone: "Asia/Jakarta",

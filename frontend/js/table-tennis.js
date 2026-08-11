@@ -1,6 +1,7 @@
 import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE as apiBase } from './api-config.js';
-import { loadCompetitionFormat, withOptionalStanding } from './competition-format.js';
+import { loadTournamentCompetitionFormat, withOptionalStanding } from './competition-format.js';
+import { loadCategories, renderCategorySelector, selectedCategory, tournamentByCategory } from './competition-categories.js';
 import {
   apiBracketView,
   bracketWinnerView,
@@ -37,16 +38,20 @@ function render(id) {
     : emptyState('BRACKET BELUM TERSEDIA');
 }
 
-const competitionFormat=await loadCompetitionFormat('table-tennis');
+const categories=await loadCategories('table-tennis');
+const category=selectedCategory(categories);
+const tournamentId=tournamentByCategory['table-tennis'][category];
+const competitionFormat=await loadTournamentCompetitionFormat(tournamentId);
 shell('Table Tennis', withOptionalStanding(competitionFormat,[
   { id: 'bracket', label: 'Bracket' },
   { id: 'winner', label: 'Winner Table Tennis' },
 ]), render);
+renderCategorySelector(categories,category);
 
 if (apiBase) {
   Promise.allSettled([
-    fetch(`${apiBase}/tournaments/table-tennis-bp-2026/standings`).then(response => response.ok ? response.json() : Promise.reject()),
-    fetch(`${apiBase}/tournaments/table-tennis-bp-2026/bracket`).then(response => response.ok ? response.json() : Promise.reject()),
+    fetch(`${apiBase}/tournaments/${tournamentId}/standings`).then(response => response.ok ? response.json() : Promise.reject()),
+    fetch(`${apiBase}/tournaments/${tournamentId}/bracket`).then(response => response.ok ? response.json() : Promise.reject()),
   ]).then(([standingResult, bracketResult]) => {
     const standingData = standingResult.status === 'fulfilled' ? standingResult.value.data : null;
     if (standingData?.length) {

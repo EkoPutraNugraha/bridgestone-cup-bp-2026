@@ -1,6 +1,7 @@
 import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE as apiBase } from './api-config.js';
-import { loadCompetitionFormat, withOptionalStanding } from './competition-format.js';
+import { loadTournamentCompetitionFormat, withOptionalStanding } from './competition-format.js';
+import { loadCategories, renderCategorySelector, selectedCategory, tournamentByCategory } from './competition-categories.js';
 import { apiBracketView, scheduleView, shell, standingView } from './sports.js?v=20260809-clean-empty-copy';
 
 const host = document.querySelector('#sport-view');
@@ -10,12 +11,12 @@ const emptyBracket = `
     <strong>BRACKET BELUM TERSEDIA</strong>
   </div>`;
 
-async function loadApiData() {
+async function loadApiData(tournamentId) {
   try {
     const [bracketResponse, matchesResponse, standingsResponse] = await Promise.all([
-      fetch(`${apiBase}/tournaments/badminton-bp-2026/bracket`, { signal: AbortSignal.timeout(5000) }),
-      fetch(`${apiBase}/tournaments/badminton-bp-2026/matches?scheduledOnly=true`, { signal: AbortSignal.timeout(5000) }),
-      fetch(`${apiBase}/tournaments/badminton-bp-2026/standings`, { signal: AbortSignal.timeout(5000) }),
+      fetch(`${apiBase}/tournaments/${tournamentId}/bracket`, { signal: AbortSignal.timeout(5000) }),
+      fetch(`${apiBase}/tournaments/${tournamentId}/matches?scheduledOnly=true`, { signal: AbortSignal.timeout(5000) }),
+      fetch(`${apiBase}/tournaments/${tournamentId}/standings`, { signal: AbortSignal.timeout(5000) }),
     ]);
     if (!bracketResponse.ok) return { bracket: null, matches: [], groups:[] };
     const bracketPayload = await bracketResponse.json();
@@ -44,8 +45,11 @@ function apiScheduleRows(matches) {
   });
 }
 
-const apiData = await loadApiData();
-const competitionFormat=await loadCompetitionFormat('badminton');
+const categories=await loadCategories('badminton');
+const category=selectedCategory(categories);
+const tournamentId=tournamentByCategory.badminton[category];
+const apiData = await loadApiData(tournamentId);
+const competitionFormat=await loadTournamentCompetitionFormat(tournamentId);
 shell('Badminton', withOptionalStanding(competitionFormat,[
   { id: 'bracket', label: 'Bracket' },
   { id: 'schedule', label: 'Schedule' },
@@ -58,3 +62,4 @@ shell('Badminton', withOptionalStanding(competitionFormat,[
     ? scheduleView(apiData.matches.length ? apiScheduleRows(apiData.matches) : [])
     : (apiBracketView('CHAMPIONSHIP BRACKET', apiData.bracket) || emptyBracket);
 });
+renderCategorySelector(categories,category);
