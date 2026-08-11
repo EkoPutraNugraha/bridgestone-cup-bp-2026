@@ -70,7 +70,8 @@ function dateTimeLocalValue(value) {
 
 function renderBracket(bracket, source) {
   activeBracket = bracket;
-  elements.title.textContent = `${bracket.participantCount} peserta • ${bracket.bracketSize} slot • ${bracket.byeCount} BYE`;
+  const tournamentName = elements.tournament.selectedOptions[0]?.textContent || 'Turnamen';
+  elements.title.textContent = `${tournamentName} · ${bracket.participantCount} peserta · ${bracket.bracketSize} slot · ${bracket.byeCount} BYE`;
   const visibleRounds = bracket.thirdPlaceMatch
     ? [...bracket.rounds, { name: 'Perebutan Juara 3', matches: [bracket.thirdPlaceMatch] }]
     : bracket.rounds;
@@ -242,6 +243,14 @@ elements.sport.addEventListener('change', async () => {
   updateParticipantSummary();
   try { await loadTournaments(); }
   catch (error) { setStatus(error.message, 'error'); }
+});
+elements.tournament.addEventListener('change', async () => {
+  activeBracket = null;
+  elements.participants.value = '';
+  updateParticipantSummary();
+  elements.title.textContent = elements.tournament.selectedOptions[0]?.textContent || 'Bracket belum dimuat';
+  elements.workspace.innerHTML = '<div class="empty-state"><strong>Memuat bracket kategori…</strong></div>';
+  await loadSavedBracket();
 });
 elements.preview.addEventListener('click', previewBracket);
 elements.save.addEventListener('click', saveBracket);
