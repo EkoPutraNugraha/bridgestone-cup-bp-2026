@@ -1,6 +1,7 @@
 import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE as apiBase } from './api-config.js';
 import { renderGalleryPreview, renderHome, renderGreetings, renderSchedules, renderSports, renderSupporters } from './components/home.js?v=20260809-clean-empty-copy';
+import { loadCategories, tournamentByCategory } from './competition-categories.js';
 
 renderHome();
 
@@ -12,16 +13,29 @@ const scheduleTournaments = {
   FOOTBALL:'football-bp-2026',
 };
 
+async function loadTournamentSchedule(tournamentId, category = '') {
+  try {
+    const response = await fetch(`${apiBase}/tournaments/${tournamentId}/matches?scheduledOnly=true`);
+    if (!response.ok) return [];
+    const payload = await response.json();
+    return payload.success ? payload.data.map(match => ({ ...match, competitionCategory: category })) : [];
+  } catch { return []; }
+}
+
+async function loadCategorizedSchedule(sport, slug) {
+  const categories = await loadCategories(slug);
+  const matches = await Promise.all(categories.map(category => loadTournamentSchedule(
+    tournamentByCategory[slug][category],
+    category === 'singles' ? 'SINGLES' : 'DOUBLES / GANDA',
+  )));
+  return [sport, matches.flat().sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt))];
+}
+
 if (apiBase) {
-  Promise.all(Object.entries(scheduleTournaments).map(async ([sport, tournamentId]) => {
-    try {
-      const response = await fetch(`${apiBase}/tournaments/${tournamentId}/matches?scheduledOnly=true`);
-      if (!response.ok) return [sport, []];
-      const payload = await response.json();
-      return [sport, payload.success ? payload.data : []];
-    } catch {
-      return [sport, []];
-    }
+  Promise.all(Object.entries(scheduleTournaments).map(([sport, tournamentId]) => {
+    if (sport === 'BADMINTON') return loadCategorizedSchedule(sport, 'badminton');
+    if (sport === 'TABLE TENNIS') return loadCategorizedSchedule(sport, 'table-tennis');
+    return loadTournamentSchedule(tournamentId).then(matches => [sport, matches]);
   })).then(entries => renderSchedules(Object.fromEntries(entries)));
 
   fetch(`${apiBase}/greetings`)

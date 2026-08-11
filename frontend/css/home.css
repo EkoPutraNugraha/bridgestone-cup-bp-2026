@@ -73,6 +73,7 @@ a,button{font:inherit}
 .schedule-row small{display:block;font-size:9px}
 .schedule-row p{margin:4px 0;color:#ebebeb;font-size:12px;font-weight:700;line-height:20px}
 .schedule-row p small{color:var(--bright);font-size:11px}
+.schedule-category{display:block;margin-bottom:2px;color:#dba824;font-size:8px;font-style:normal;letter-spacing:.08em;line-height:1.1}
 .fishing-panel{height:330px;margin:13px 11px 0;padding:25px 12px;text-align:center;border:1px solid var(--line);border-radius:12px;background:#060707}
 .fishing-panel time{display:grid;grid-template-rows:auto auto;place-items:center;align-content:center;gap:3px;width:97px;height:96px;margin:0 auto 24px;border:1px solid var(--line);border-radius:14px;background:var(--bright);color:#060707}
 .fishing-panel time b{font-size:34px}
@@ -452,7 +453,8 @@ main::before{inset:8px;border-radius:16px}
   .schedule-row b{font-size:11px;line-height:10px}
   .schedule-row small{font-size:6px}
   .schedule-row p{margin:1px 0;font-size:7px;line-height:12px}
-  .schedule-row p small{font-size:6px}
+.schedule-row p small{font-size:6px}
+.schedule-category{font-size:5px}
   .fishing-panel{height:193px;margin:8px 6px 0;padding:15px 7px;border-radius:7px}
   .fishing-panel time{width:68px;height:60px;margin-bottom:14px;border-radius:8px;gap:2px}
   .fishing-panel time b{font-size:20px}
