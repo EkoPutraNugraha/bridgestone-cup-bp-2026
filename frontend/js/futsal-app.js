@@ -1,5 +1,6 @@
 import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE as apiBase } from './api-config.js';
+import { loadCompetitionFormat, withOptionalStanding } from './competition-format.js';
 import {
   apiBracketView,
   bracketWinnerView,
@@ -58,12 +59,12 @@ function render(id) {
   host.innerHTML = `${bracket}${scorers()}`;
 }
 
-shell('Futsal', [
-  { id: 'group-standing', label: 'Group Standing' },
+const competitionFormat=await loadCompetitionFormat('futsal');
+shell('Futsal', withOptionalStanding(competitionFormat,[
   { id: 'bracket', label: 'Bracket' },
   { id: 'schedule', label: 'Schedule' },
   { id: 'winner', label: 'Winner Futsal' },
-], render);
+]), render);
 
 if (apiBase) {
   Promise.allSettled([
@@ -84,6 +85,6 @@ if (apiBase) {
       topScorers = scorerResult.value.data || [];
       scorerSource = topScorers.length ? 'api' : 'empty';
     }
-    render(location.hash.slice(1) || 'group-standing');
+    const requestedView=location.hash.slice(1);render(!competitionFormat.usesGroupStage&&requestedView==='group-standing'?'bracket':requestedView||(competitionFormat.usesGroupStage?'group-standing':'bracket'));
   });
 }

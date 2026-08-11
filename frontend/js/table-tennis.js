@@ -1,5 +1,6 @@
 import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE as apiBase } from './api-config.js';
+import { loadCompetitionFormat, withOptionalStanding } from './competition-format.js';
 import {
   apiBracketView,
   bracketWinnerView,
@@ -36,11 +37,11 @@ function render(id) {
     : emptyState('BRACKET BELUM TERSEDIA');
 }
 
-shell('Table Tennis', [
-  { id: 'group-standing', label: 'Group Standing' },
+const competitionFormat=await loadCompetitionFormat('table-tennis');
+shell('Table Tennis', withOptionalStanding(competitionFormat,[
   { id: 'bracket', label: 'Bracket' },
   { id: 'winner', label: 'Winner Table Tennis' },
-], render);
+]), render);
 
 if (apiBase) {
   Promise.allSettled([
@@ -56,6 +57,6 @@ if (apiBase) {
       liveBracket = bracketResult.value.data;
       bracketSource = 'api';
     }
-    render(location.hash.slice(1) || 'group-standing');
+    const requestedView=location.hash.slice(1);render(!competitionFormat.usesGroupStage&&requestedView==='group-standing'?'bracket':requestedView||(competitionFormat.usesGroupStage?'group-standing':'bracket'));
   });
 }

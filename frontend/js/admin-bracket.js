@@ -15,17 +15,17 @@ const elements = {
 };
 
 const requestedSport = new URLSearchParams(location.search).get('sport');
-const GROUP_BRACKET_SPORTS = new Set(['futsal', 'chess', 'table-tennis']);
-const groupBracketMode = GROUP_BRACKET_SPORTS.has(requestedSport);
+let groupBracketMode = false;
 const publicSportLink = document.querySelector('#public-sport-link');
 let activeBracket = null;
 
+function applyGroupBracketMode() {
 if (groupBracketMode) {
   document.body.classList.add('group-bracket-mode');
   elements.title.textContent = 'Memuat bracket hasil grup…';
   elements.status.textContent = 'Peserta diambil otomatis dari hasil Group Standing.';
   elements.workspace.innerHTML = '<div class="empty-state"><strong>Memuat bracket…</strong><span>Peserta berasal dari hasil kelolosan grup.</span></div>';
-}
+}}
 if (requestedSport && publicSportLink) publicSportLink.href = `${requestedSport}.html#bracket`;
 
 const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, character => ({
@@ -119,11 +119,10 @@ async function loadTournaments() {
 
 async function initialize() {
   try {
+    if(requestedSport){const format=await api(`/tournaments/${requestedSport}-bp-2026/competition-format`);groupBracketMode=Boolean(format.data?.usesGroupStage);applyGroupBracketMode()}
     const payload = await api('/sports');
     elements.sport.innerHTML = payload.data
-      .filter(sport => groupBracketMode
-        ? sport.slug === requestedSport
-        : ['badminton', 'football'].includes(sport.slug))
+      .filter(sport => requestedSport ? sport.slug === requestedSport : sport.slug !== 'fishing')
       .map(sport => `<option value="${escapeHtml(sport.slug)}">${escapeHtml(sport.name)}</option>`)
       .join('');
     if (requestedSport && [...elements.sport.options].some(option => option.value === requestedSport)) elements.sport.value = requestedSport;

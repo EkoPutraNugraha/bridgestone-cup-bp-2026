@@ -174,6 +174,21 @@ test("GET /api/tournaments/:id returns tournament details", async () => {
   assert.equal(body.data.timezone, "Asia/Jakarta");
 });
 
+test("GET competition format exposes whether a group stage is enabled", async () => {
+  const response = await fetch(`${baseUrl}/api/tournaments/futsal-bp-2026/competition-format`);
+  const body = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(body.data.format, "group_and_single_elimination");
+  assert.equal(body.data.usesGroupStage, true);
+});
+
+test("Fishing does not expose the playoff competition format switch", async () => {
+  const response = await fetch(`${baseUrl}/api/tournaments/fishing-bp-2026/competition-format`);
+  const body = await response.json();
+  assert.equal(response.status, 422);
+  assert.equal(body.message, "Fishing competition format is managed through ranking");
+});
+
 test("missing sports and tournaments use the standard 404 response", async () => {
   const [sportResponse, tournamentResponse] = await Promise.all([
     fetch(`${baseUrl}/api/sports/unknown`),

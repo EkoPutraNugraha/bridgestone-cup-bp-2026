@@ -1,6 +1,7 @@
 import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE } from './api-config.js';
-import { apiBracketView, bracketView, scheduleView, shell } from './sports.js?v=20260809-clean-empty-copy';
+import { loadCompetitionFormat, withOptionalStanding } from './competition-format.js';
+import { apiBracketView, bracketView, scheduleView, shell, standingView } from './sports.js?v=20260809-clean-empty-copy';
 
 const host = document.querySelector('#sport-view');
 const localTeams = [
@@ -22,22 +23,25 @@ function apiBaseUrl() {
 
 async function loadApiData() {
   const apiBase = apiBaseUrl();
-  if (!apiBase) return { bracket: null, matches: [] };
+  if (!apiBase) return { bracket: null, matches: [], groups:[] };
 
   try {
-    const [bracketResponse, matchesResponse] = await Promise.all([
+    const [bracketResponse, matchesResponse, standingsResponse] = await Promise.all([
       fetch(`${apiBase}/tournaments/football-bp-2026/bracket`, { signal: AbortSignal.timeout(1500) }),
       fetch(`${apiBase}/tournaments/football-bp-2026/matches?scheduledOnly=true`, { signal: AbortSignal.timeout(1500) }),
+      fetch(`${apiBase}/tournaments/football-bp-2026/standings`, { signal: AbortSignal.timeout(1500) }),
     ]);
-    if (!bracketResponse.ok) return { bracket: null, matches: [] };
+    if (!bracketResponse.ok) return { bracket: null, matches: [], groups:[] };
     const bracketPayload = await bracketResponse.json();
     const matchesPayload = matchesResponse.ok ? await matchesResponse.json() : null;
+    const standingsPayload = standingsResponse.ok ? await standingsResponse.json() : null;
     return {
       bracket: bracketPayload.success ? bracketPayload.data : null,
       matches: matchesPayload?.success ? matchesPayload.data : [],
+      groups:standingsPayload?.data?.map(group=>group.rows.map(row=>[row.name,row.points]))||[],
     };
   } catch {
-    return { bracket: null, matches: [] };
+    return { bracket: null, matches: [], groups:[] };
   }
 }
 
@@ -59,11 +63,13 @@ function apiScheduleRows(matches) {
 }
 
 const apiData = await loadApiData();
+const competitionFormat=await loadCompetitionFormat('football');
 
-shell('Football', [
+shell('Football', withOptionalStanding(competitionFormat,[
   { id: 'bracket', label: 'Bracket' },
   { id: 'schedule', label: 'Schedule' },
-], id => {
+]), id => {
+  if(id==='group-standing'){host.innerHTML=standingView(apiData.groups);host.dataset.source=apiData.groups.length?'api':'empty';return}
   if (id === 'schedule') {
     host.innerHTML = scheduleView(apiData.matches.length ? apiScheduleRows(apiData.matches) : []);
     host.dataset.source = apiData.matches.length ? 'api' : 'empty';
