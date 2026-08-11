@@ -1,7 +1,6 @@
 import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE as apiBase } from './api-config.js';
-import { renderGalleryPreview, renderHome, renderGreetings, renderSchedules, renderSports, renderSupporters } from './components/home.js?v=20260809-clean-empty-copy';
-import { loadCategories, tournamentByCategory } from './competition-categories.js';
+import { renderGalleryPreview, renderHome, renderGreetings, renderSchedules, renderSports, renderSupporters } from './components/home.js?v=20260811-category-schedules-2';
 
 renderHome();
 
@@ -13,6 +12,17 @@ const scheduleTournaments = {
   FOOTBALL:'football-bp-2026',
 };
 
+const categorizedScheduleTournaments = {
+  BADMINTON: [
+    { tournamentId: 'badminton-singles-bp-2026', category: 'SINGLES' },
+    { tournamentId: 'badminton-bp-2026', category: 'DOUBLES / GANDA' },
+  ],
+  'TABLE TENNIS': [
+    { tournamentId: 'table-tennis-bp-2026', category: 'SINGLES' },
+    { tournamentId: 'table-tennis-doubles-bp-2026', category: 'DOUBLES / GANDA' },
+  ],
+};
+
 async function loadTournamentSchedule(tournamentId, category = '') {
   try {
     const response = await fetch(`${apiBase}/tournaments/${tournamentId}/matches?scheduledOnly=true`);
@@ -22,19 +32,16 @@ async function loadTournamentSchedule(tournamentId, category = '') {
   } catch { return []; }
 }
 
-async function loadCategorizedSchedule(sport, slug) {
-  const categories = await loadCategories(slug);
-  const matches = await Promise.all(categories.map(category => loadTournamentSchedule(
-    tournamentByCategory[slug][category],
-    category === 'singles' ? 'SINGLES' : 'DOUBLES / GANDA',
+async function loadCategorizedSchedule(sport) {
+  const matches = await Promise.all(categorizedScheduleTournaments[sport].map(({ tournamentId, category }) => (
+    loadTournamentSchedule(tournamentId, category)
   )));
   return [sport, matches.flat().sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt))];
 }
 
 if (apiBase) {
   Promise.all(Object.entries(scheduleTournaments).map(([sport, tournamentId]) => {
-    if (sport === 'BADMINTON') return loadCategorizedSchedule(sport, 'badminton');
-    if (sport === 'TABLE TENNIS') return loadCategorizedSchedule(sport, 'table-tennis');
+    if (categorizedScheduleTournaments[sport]) return loadCategorizedSchedule(sport);
     return loadTournamentSchedule(tournamentId).then(matches => [sport, matches]);
   })).then(entries => renderSchedules(Object.fromEntries(entries)));
 
