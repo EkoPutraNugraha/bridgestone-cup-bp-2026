@@ -1,10 +1,9 @@
 import { getSupabaseAdminClient } from "../../config/supabase.js";
-import { env } from "../../config/env.js";
+import { mediaPublicUrl } from "../../config/media-storage.js";
 import { AppError } from "../../shared/app-error.js";
 
 const SELECT = "id, name, role_id, role_en, message_id, message_en, photo_storage_path, sort_order, status, created_at, updated_at";
-const publicUrl = path => path ? `${env.supabaseUrl}/storage/v1/object/public/event-media/${path}` : null;
-const mapGreeting = item => ({ id:item.id, name:item.name, roleId:item.role_id, roleEn:item.role_en, messageId:item.message_id, messageEn:item.message_en, photoStoragePath:item.photo_storage_path, photoUrl:publicUrl(item.photo_storage_path), sortOrder:item.sort_order, status:item.status, createdAt:item.created_at, updatedAt:item.updated_at });
+const mapGreeting = item => ({ id:item.id, name:item.name, roleId:item.role_id, roleEn:item.role_en, messageId:item.message_id, messageEn:item.message_en, photoStoragePath:item.photo_storage_path, photoUrl:mediaPublicUrl(item.photo_storage_path), sortOrder:item.sort_order, status:item.status, createdAt:item.created_at, updatedAt:item.updated_at });
 const row = (input, adminId) => ({ name:input.name, role_id:input.roleId, role_en:input.roleEn || null, message_id:input.messageId, message_en:input.messageEn || null, photo_storage_path:input.photoStoragePath || null, sort_order:input.sortOrder ?? 0, status:input.status || "draft", ...(adminId ? {created_by:adminId} : {}) });
 
 export async function listGreetings({includeUnpublished=false}={}, client=getSupabaseAdminClient()) {

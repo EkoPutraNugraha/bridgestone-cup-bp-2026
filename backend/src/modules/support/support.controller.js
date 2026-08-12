@@ -5,7 +5,7 @@ function validate(body) {
   if (!body || typeof body.author !== "string" || !body.author.trim()) throw new AppError(422, "author is required");
   if (typeof body.teamName !== "string" || body.teamName.trim().length < 2 || body.teamName.trim().length > 120) throw new AppError(422, "teamName must be between 2 and 120 characters");
   if (typeof body.messageId !== "string" || !body.messageId.trim()) throw new AppError(422, "messageId is required");
-  if (body.photoStoragePath && !/^support\/[a-f0-9-]+\.(jpg|png|webp)$/.test(body.photoStoragePath)) throw new AppError(422, "Invalid support photo path");
+  if (body.photoStoragePath && !/^(?:r2\/)?support\/[a-f0-9-]+\.(jpg|png|webp)$/.test(body.photoStoragePath)) throw new AppError(422, "Invalid support photo path");
   if (body.status && !["draft", "published", "archived"].includes(body.status)) throw new AppError(422, "Invalid support status");
   if (body.sortOrder !== undefined && (!Number.isInteger(body.sortOrder) || body.sortOrder < 0)) throw new AppError(422, "sortOrder must be a non-negative integer");
   return body;

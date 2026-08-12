@@ -10,7 +10,7 @@ import { createBracketsRouter, publicBracketsRouter } from "./modules/brackets/b
 import { sportsRouter } from "./modules/sports/sports.routes.js";
 import { adminTournamentsRouter, tournamentsRouter } from "./modules/tournaments/tournaments.routes.js";
 import { configRouter } from "./modules/config/config.routes.js";
-import { mediaRouter } from "./modules/media/media.routes.js";
+import { mediaRouter, publicMediaRouter } from "./modules/media/media.routes.js";
 import { adminGalleryRouter, publicGalleryRouter } from "./modules/gallery/gallery.routes.js";
 import { adminGreetingsRouter, publicGreetingsRouter } from "./modules/greetings/greetings.routes.js";
 import { adminSupportRouter, publicSupportRouter } from "./modules/support/support.routes.js";
@@ -41,6 +41,7 @@ app.use("/api/health", healthRouter);
 app.use("/api/config", configRouter);
 app.use("/api/admin", authRouter);
 app.use("/api/admin", mediaRouter);
+app.use("/api/media", publicMediaRouter);
 app.use("/api/admin/gallery", adminGalleryRouter);
 app.use("/api/gallery", publicGalleryRouter);
 app.use("/api/admin/greetings", adminGreetingsRouter);

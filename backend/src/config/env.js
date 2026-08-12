@@ -27,6 +27,17 @@ const supabaseSecretKey = (
   || ""
 );
 
+const mediaStorageProvider = (process.env.MEDIA_STORAGE_PROVIDER?.trim().toLowerCase() || "supabase");
+if (!['supabase', 'r2'].includes(mediaStorageProvider)) {
+  throw new Error("MEDIA_STORAGE_PROVIDER must be either supabase or r2");
+}
+const r2AccountId = process.env.R2_ACCOUNT_ID?.trim() ?? "";
+const r2AccessKeyId = process.env.R2_ACCESS_KEY_ID?.trim() ?? "";
+const r2SecretAccessKey = process.env.R2_SECRET_ACCESS_KEY?.trim() ?? "";
+const r2Bucket = process.env.R2_BUCKET?.trim() ?? "";
+const r2PublicBaseUrl = (process.env.R2_PUBLIC_BASE_URL?.trim() ?? "").replace(/\/$/, "");
+const publicApiBaseUrl = (process.env.PUBLIC_API_BASE_URL?.trim() ?? "").replace(/\/$/, "");
+
 export const env = Object.freeze({
   nodeEnv: process.env.NODE_ENV ?? "development",
   port: parsePort(process.env.PORT),
@@ -35,4 +46,12 @@ export const env = Object.freeze({
   supabasePublishableKey,
   supabaseSecretKey,
   supabaseConfigured: Boolean(supabaseUrl && supabaseSecretKey),
+  mediaStorageProvider,
+  r2AccountId,
+  r2AccessKeyId,
+  r2SecretAccessKey,
+  r2Bucket,
+  r2PublicBaseUrl,
+  publicApiBaseUrl,
+  r2Configured: Boolean(r2AccountId && r2AccessKeyId && r2SecretAccessKey && r2Bucket && r2PublicBaseUrl),
 });
