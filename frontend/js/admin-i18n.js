@@ -24,7 +24,7 @@ const idToEn = new Map(Object.entries({
   'Kapasitas Penyimpanan': 'Storage Capacity',
   'Memuat pemakaianâ€¦': 'Loading usageâ€¦',
   'Memuatâ€¦': 'Loadingâ€¦',
-  'Masih aman': 'Safe',
+  'Aman': 'Safe',
   'Perlu diperhatikan': 'Needs attention',
   'Hampir penuh': 'Almost full',
   'terpakai': 'used',

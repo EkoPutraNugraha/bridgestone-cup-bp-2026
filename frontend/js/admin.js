@@ -36,7 +36,7 @@ const formatBytes = bytes => {
 };
 
 function storageCard(name, usage) {
-  const statusLabel = usage.status === 'critical' ? 'Hampir penuh' : usage.status === 'warning' ? 'Perlu diperhatikan' : 'Masih aman';
+  const statusLabel = usage.status === 'critical' ? 'Hampir penuh' : usage.status === 'warning' ? 'Perlu diperhatikan' : 'Aman';
   return `<article class="storage-card ${usage.status}">
     <div class="storage-card-heading"><strong>${name}</strong><em>${statusLabel}</em></div>
     <b>${formatBytes(usage.usedBytes)} <small>/ ${formatBytes(usage.limitBytes)}</small></b>
