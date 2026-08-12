@@ -112,7 +112,7 @@ const installSwitcher = () => {
 };
 
 const style = document.createElement('style');
-style.textContent = '.public-language-switcher{display:inline-flex;align-items:center;gap:2px;margin-left:10px;padding:3px;border:1px solid #66501d;border-radius:999px;background:#080704}.public-language-switcher button{min-width:30px;padding:7px 9px;border:0;border-radius:999px;background:transparent;color:#aaa;font:700 10px Inter,sans-serif;cursor:pointer}.public-language-switcher button.active{background:#d6a42c;color:#090704}@media(max-width:760px){.public-language-switcher{margin:8px 0 0}}';
+style.textContent = '.public-language-switcher{display:inline-flex;align-items:center;gap:2px;margin-left:10px;padding:3px;border:1px solid #66501d;border-radius:999px;background:#080704}.public-language-switcher button{min-width:30px;padding:7px 9px;border:0;border-radius:999px;background:transparent;color:#aaa;font:700 10px Inter,sans-serif;cursor:pointer}.public-language-switcher button.active{background:#d6a42c;color:#090704}.sport-collection .gallery-topbar{position:relative}.sport-collection .gallery-topbar>#photo-count{display:none!important}.sport-collection .gallery-topbar>.public-language-switcher{position:absolute;top:50%;right:20px;grid-column:auto!important;width:auto!important;margin:0!important;transform:translateY(-50%)}@media(max-width:760px){.public-language-switcher{margin:8px 0 0}}@media(max-width:520px){.sport-collection .gallery-topbar>.public-language-switcher{right:10px;margin:0!important}}';
 document.head.append(style);
 installSwitcher();
 translateTree(document.body);

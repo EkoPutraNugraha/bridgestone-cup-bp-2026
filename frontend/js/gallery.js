@@ -1,4 +1,4 @@
-import './public-i18n.js?v=20260809-clean-empty-copy';
+import './public-i18n.js?v=20260812-gallery-nav-v2';
 import { API_BASE as apiBase } from './api-config.js';
 import { gallerySports } from './data/gallery-data.js?v=20260809-live-only';
 

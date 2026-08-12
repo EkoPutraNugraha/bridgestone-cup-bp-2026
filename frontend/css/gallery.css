@@ -43,3 +43,19 @@
   .gallery-topbar>.gallery-language-toggle{grid-column:auto;justify-self:end;margin:0}
   .gallery-language-toggle span{min-width:27px;padding:6px 7px;font-size:9px}
 }
+
+/* Backward-compatible layout for browsers still holding the old sport-page HTML. */
+.sport-collection .gallery-topbar{position:relative}
+.sport-collection .gallery-topbar>#photo-count{display:none!important}
+.sport-collection .gallery-topbar>.public-language-switcher{
+  position:absolute;
+  top:50%;
+  right:20px;
+  grid-column:auto!important;
+  width:auto!important;
+  margin:0!important;
+  transform:translateY(-50%);
+}
+@media(max-width:520px){
+  .sport-collection .gallery-topbar>.public-language-switcher{right:10px;margin:0!important}
+}
