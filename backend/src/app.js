@@ -18,6 +18,7 @@ import { adminAnnouncementsRouter, publicAnnouncementsRouter } from "./modules/a
 import { adminStandingsRouter, publicStandingsRouter } from "./modules/standings/standings.routes.js";
 import { adminFishingRouter, publicFishingRouter } from "./modules/fishing/fishing.routes.js";
 import { adminCompetitionCategoriesRouter, publicCompetitionCategoriesRouter } from "./modules/competition-categories/competition-categories.routes.js";
+import { storageUsageRouter } from "./modules/storage-usage/storage-usage.routes.js";
 
 export function createApp({ bracketAuthentication } = {}) {
   const app = express();
@@ -41,6 +42,7 @@ app.use("/api/health", healthRouter);
 app.use("/api/config", configRouter);
 app.use("/api/admin", authRouter);
 app.use("/api/admin", mediaRouter);
+app.use("/api/admin", storageUsageRouter);
 app.use("/api/media", publicMediaRouter);
 app.use("/api/admin/gallery", adminGalleryRouter);
 app.use("/api/gallery", publicGalleryRouter);

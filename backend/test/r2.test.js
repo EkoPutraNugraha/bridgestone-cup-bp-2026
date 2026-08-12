@@ -39,3 +39,29 @@ test("R2 client returns a safe backend error when an operation fails", async () 
   }, async () => ({ ok: false, status: 403 }), () => new Date("2026-08-11T08:00:00.000Z"));
   await assert.rejects(() => client.deleteObject("gallery/image.jpg"), error => error.statusCode === 502 && !error.message.includes("secret123"));
 });
+
+test("R2 client lists object sizes and continuation tokens", async () => {
+  const requests = [];
+  const client = createR2Client({
+    accountId: "account123",
+    accessKeyId: "access123",
+    secretAccessKey: "secret123",
+    bucket: "event-media",
+  }, async (url, options) => {
+    requests.push({ url, options });
+    return new Response("<ListBucketResult><Contents><Key>a.png</Key><Size>120</Size></Contents><NextContinuationToken>page-2</NextContinuationToken></ListBucketResult>", { status:200 });
+  }, () => new Date("2026-08-12T07:00:00.000Z"));
+  const result = await client.listObjects();
+  assert.deepEqual(result, { sizes:[120], nextToken:"page-2" });
+  assert.match(requests[0].url, /list-type=2&max-keys=1000/);
+});
+
+test("R2 pagination signs continuation token in canonical query order", async () => {
+  const requests = [];
+  const client = createR2Client({ accountId:"account123", accessKeyId:"access123", secretAccessKey:"secret123", bucket:"event-media" }, async (url, options) => {
+    requests.push({ url, options });
+    return new Response("<ListBucketResult></ListBucketResult>", { status:200 });
+  }, () => new Date("2026-08-12T07:00:00.000Z"));
+  await client.listObjects("page 2");
+  assert.match(requests[0].url, /\?continuation-token=page\+2&list-type=2&max-keys=1000$/);
+});

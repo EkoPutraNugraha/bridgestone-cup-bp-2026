@@ -53,6 +53,11 @@ test("GET /api/admin/me requires a Bearer token", async () => {
   assert.equal(body.message, "A valid Bearer token is required");
 });
 
+test("storage usage endpoint requires an admin session", async () => {
+  const response = await fetch(`${baseUrl}/api/admin/storage-usage`);
+  assert.equal(response.status, 401);
+});
+
 test("admin bracket mutations require authentication in the production app", async () => {
   const protectedServer = app.listen(0);
   await new Promise((resolve) => protectedServer.once("listening", resolve));

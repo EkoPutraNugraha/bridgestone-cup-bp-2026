@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin.css?v=20260808-1">
+  <link rel="stylesheet" href="../css/admin.css?v=20260812-2">
 </head>
 <body>
   <main class="dashboard-shell">
@@ -15,6 +15,17 @@
       <div class="brand-block"><span>BRIDGESTONE CUP BP 2026</span><h1>DASHBOARD ADMIN</h1></div>
       <div class="header-actions"><span id="admin-identity"></span><button id="logout-button" type="button">Keluar</button><a href="../index.html">Situs publik</a></div>
     </header>
+
+    <section class="storage-panel" aria-labelledby="storage-heading">
+      <header class="section-heading">
+        <div><small>KAPASITAS MEDIA</small><h2 id="storage-heading">Kapasitas Penyimpanan</h2></div>
+        <span id="storage-checked">Memuat pemakaianâ€¦</span>
+      </header>
+      <div id="storage-usage" class="storage-grid" aria-live="polite">
+        <article class="storage-card loading"><strong>Supabase</strong><span>Memuatâ€¦</span></article>
+        <article class="storage-card loading"><strong>Cloudflare R2</strong><span>Memuatâ€¦</span></article>
+      </div>
+    </section>
 
     <section class="dashboard-grid">
       <section class="modules-panel">
@@ -34,6 +45,6 @@
       </aside>
     </section>
   </main>
-  <script type="module" src="../js/admin.js?v=20260808-1"></script>
+  <script type="module" src="../js/admin.js?v=20260812-2"></script>
 </body>
 </html>
