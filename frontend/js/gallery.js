@@ -54,7 +54,8 @@ if (momentsGrid) {
   momentsGrid.dataset.source = moments.length ? 'api' : 'empty';
   const photoWord = moments.length === 1 ? 'PHOTO' : 'PHOTOS';
   const momentWord = moments.length === 1 ? 'MOMENT' : 'MOMENTS';
-  document.querySelector('#photo-count').textContent = `${moments.length} ${photoWord}`;
+  const photoCount = document.querySelector('#photo-count');
+  if (photoCount) photoCount.textContent = `${moments.length} ${photoWord}`;
   document.querySelector('#archive-count').textContent = `${moments.length} ${momentWord} ARCHIVED`;
   document.querySelector('.gallery-heading>span').textContent = moments.length ? `${moments.length} tournament ${photoWord.toLowerCase()} — select any image to view the full moment.` : 'Belum ada foto yang dipublikasikan untuk cabang olahraga ini.';
 
