@@ -203,9 +203,315 @@ a,button{font:inherit}
   #support .support-qr .qr{width:112px;height:112px;border-radius:10px}
   #support .support-qr>p{font-size:14px;line-height:17px;text-align:left}
 }
+
+/* Final continuous-background overrides — intentionally last. */
+main{
+  background:#020202;
+}
+.hero{
+  background-image:
+    radial-gradient(circle at 50% 42%,rgba(91,57,4,.48),transparent 34%),
+    linear-gradient(180deg,#020202 0%,#080704 48%,#020202 100%)!important;
+}
+.panel.section{
+  margin-top:-1px;
+  background-image:
+    radial-gradient(circle at 18% 38%,rgba(145,92,8,.19),transparent 27%),
+    radial-gradient(circle at 82% 62%,rgba(102,62,5,.16),transparent 29%),
+    repeating-linear-gradient(90deg,transparent 0 79px,rgba(214,161,42,.012) 80px),
+    repeating-linear-gradient(0deg,transparent 0 79px,rgba(214,161,42,.01) 80px),
+    linear-gradient(180deg,#020202 0%,#070503 18%,#090704 50%,#070503 82%,#020202 100%)!important;
+  background-position:calc(var(--page-scroll,0px) * -.008) 0,calc(var(--page-scroll,0px) * .01) 0,0 0,0 0,0 0;
+}
+.panel.section::before{
+  inset:-2px 0 auto!important;
+  width:auto!important;
+  height:112px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:linear-gradient(180deg,#020202 0%,rgba(2,2,2,.82) 28%,transparent 100%)!important;
+  box-shadow:none!important;
+}
+
+/* Seamless section canvas + one consistent championship display face. */
+.panel.section{
+  background-image:linear-gradient(180deg,#020202 0%,#050402 16%,#090704 50%,#050402 84%,#020202 100%)!important;
+  background-position:0 0!important;
+}
+.hero::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  left:0;
+  right:0;
+  bottom:-1px;
+  height:150px;
+  pointer-events:none;
+  background:linear-gradient(180deg,transparent,#020202 88%);
+}
+.section-heading h2,
+.section-heading.left h2,
+.arena-heading h2,
+#support .section-heading h2,
+.support-subtitle{
+  font-family:'Barlow Condensed',Arial,sans-serif!important;
+  font-style:italic!important;
+  font-weight:800!important;
+  letter-spacing:.055em!important;
+  text-transform:uppercase;
+  text-wrap:balance;
+}
+.section-heading h2,
+.section-heading.left h2,
+#support .section-heading h2{
+  font-size:clamp(44px,4vw,58px)!important;
+  line-height:.98!important;
+}
+.arena-heading h2{font-size:clamp(42px,3.7vw,54px)!important;line-height:1!important}
+.support-subtitle{font-size:clamp(28px,2.4vw,36px)!important;line-height:1.05!important}
+
+@media(max-width:700px){
+  .section-heading h2,
+  .section-heading.left h2,
+  #support .section-heading h2,
+  .arena-heading h2{font-size:34px!important;line-height:1!important}
+  .support-subtitle{font-size:25px!important}
+}
+
+/* Official anniversary artwork — preview 10. */
+.anniversary-wordmark{
+  width:min(570px,100%);
+  height:auto;
+  max-height:116px;
+  object-fit:contain;
+  filter:drop-shadow(0 8px 24px rgba(216,163,45,.22));
+}
+.official-anniversary .anniversary-seal{
+  position:absolute;
+  inset:40px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(216,163,45,.12),transparent 67%);
+  filter:drop-shadow(0 0 25px rgba(216,163,45,.18));
+  animation:anniversarySealBreath 5.5s ease-in-out infinite;
+}
+.official-anniversary .anniversary-seal img{
+  width:78%;
+  height:78%;
+  object-fit:contain;
+}
+.section-brand-art{
+  position:absolute;
+  z-index:0;
+  pointer-events:none;
+  user-select:none;
+  opacity:.105;
+  filter:drop-shadow(0 0 24px rgba(212,163,46,.16));
+  will-change:transform,opacity;
+  animation:brandArtworkFloat 9s ease-in-out infinite alternate;
+}
+.section-brand-art img{display:block;width:100%;height:100%;object-fit:contain}
+.section-brand-art.brand-motto-wide{width:min(43vw,620px);height:180px;right:5%;bottom:5%}
+.panel.section:nth-of-type(even) .section-brand-art.brand-motto-wide{right:auto;left:5%}
+.section-brand-art.brand-emblem-round{width:min(36vw,490px);height:min(36vw,490px);right:2%;top:50%;transform:translateY(-50%);animation-name:brandArtworkOrbit}
+.section-brand-art.brand-emblem-tall{width:min(27vw,390px);height:min(32vw,460px);left:3%;bottom:2%;animation-delay:-3s}
+#support .section-brand-art{bottom:1%;right:4%;left:auto}
+.motion-ready .section:not(.is-revealed) .section-brand-art{opacity:0;transform:translate3d(0,36px,0) scale(.96)}
+.motion-ready .section.is-revealed .section-brand-art{transition:opacity .8s ease,transform 1s cubic-bezier(.2,.8,.2,1)}
+
+@keyframes anniversarySealBreath{
+  0%,100%{transform:scale(.96);opacity:.76}
+  50%{transform:scale(1.035);opacity:1}
+}
+@keyframes brandArtworkFloat{
+  0%{transform:translate3d(-8px,7px,0) rotate(-.4deg);opacity:.075}
+  100%{transform:translate3d(9px,-7px,0) rotate(.4deg);opacity:.145}
+}
+@keyframes brandArtworkOrbit{
+  0%{transform:translateY(-50%) rotate(-3deg) scale(.97);opacity:.07}
+  100%{transform:translateY(-50%) rotate(3deg) scale(1.03);opacity:.135}
+}
+
+@media(max-width:1100px){
+  .anniversary-wordmark{max-width:500px}
+  .official-anniversary .anniversary-seal{inset:32px}
+  .section-brand-art.brand-motto-wide{width:48vw;height:145px}
+}
+
+@media(max-width:700px){
+  .anniversary-wordmark{width:295px!important;height:auto!important;max-height:74px!important}
+  .official-anniversary .anniversary-seal{inset:27px}
+  .section-brand-art{opacity:.07}
+  .section-brand-art.brand-motto-wide{width:78vw;height:92px;right:-9%;bottom:2%}
+  .panel.section:nth-of-type(even) .section-brand-art.brand-motto-wide{left:-9%;right:auto}
+  .section-brand-art.brand-emblem-round{width:330px;height:330px;right:-190px;top:38%}
+  .section-brand-art.brand-emblem-tall{width:230px;height:270px;left:-100px;bottom:4%}
+  #support .section-brand-art{right:-8%;left:auto}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .official-anniversary .anniversary-seal,.section-brand-art{animation:none!important}
+  .section-brand-art{transform:none!important}
+}
+
+/* One continuous canvas: every panel enters and exits through the same black. */
+main{
+  background:
+    radial-gradient(circle at 50% 22%,rgba(128,78,8,.13),transparent 26%),
+    linear-gradient(180deg,#020202 0%,#070503 48%,#020202 100%);
+}
+.hero{
+  background-image:
+    radial-gradient(circle at 50% 42%,rgba(91,57,4,.5),transparent 34%),
+    linear-gradient(180deg,#020202 0%,#080704 46%,#020202 100%)!important;
+}
+.panel.section{
+  margin-top:-1px;
+  background-image:
+    radial-gradient(circle at 18% 38%,rgba(145,92,8,.20),transparent 27%),
+    radial-gradient(circle at 82% 62%,rgba(102,62,5,.17),transparent 29%),
+    repeating-linear-gradient(90deg,transparent 0 79px,rgba(214,161,42,.014) 80px),
+    repeating-linear-gradient(0deg,transparent 0 79px,rgba(214,161,42,.011) 80px),
+    linear-gradient(180deg,#020202 0%,#070503 18%,#090704 50%,#070503 82%,#020202 100%)!important;
+  background-position:
+    calc(var(--page-scroll,0px) * -.008) 0,
+    calc(var(--page-scroll,0px) * .01) 0,
+    0 0,0 0,0 0;
+}
+.panel.section::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  left:0;
+  right:0;
+  top:-2px;
+  height:90px;
+  pointer-events:none;
+  background:linear-gradient(180deg,#020202 0%,rgba(2,2,2,.88) 22%,transparent 100%);
+}
 @media(prefers-reduced-motion:reduce){
   #support .support-qr .qr{transition:none}
 }
+
+/* Homepage motion preview — restrained black-and-gold ceremony atmosphere. */
+.hero{background-image:radial-gradient(circle at 50% 42%,rgba(91,57,4,.5),transparent 34%),linear-gradient(145deg,#020202 0%,#080704 48%,#020202 100%)!important}
+.hero-atmosphere{position:absolute;z-index:0;inset:0;overflow:hidden;pointer-events:none}
+.hero-atmosphere::before{content:"";position:absolute;inset:-18%;background:radial-gradient(circle at 50% 38%,rgba(229,171,45,.2),transparent 25%),repeating-linear-gradient(118deg,transparent 0 80px,rgba(205,146,29,.025) 81px 82px,transparent 83px 150px),linear-gradient(105deg,transparent 35%,rgba(235,185,61,.08) 48%,transparent 61%);animation:heroLightSweep 9s ease-in-out infinite alternate}
+.hero-atmosphere::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 0 43%,rgba(231,177,47,.1) 49%,transparent 55% 100%);transform:translateX(-100%);animation:heroGoldScan 8s 1.2s ease-in-out infinite}
+.hero-atmosphere i{position:absolute;display:block;border:1px solid rgba(232,183,66,.24);border-radius:50%;filter:drop-shadow(0 0 12px rgba(212,163,46,.18));animation:heroOrbit 14s linear infinite}
+.hero-atmosphere i:nth-child(1){top:18%;left:9%;width:220px;height:220px}
+.hero-atmosphere i:nth-child(2){right:8%;bottom:14%;width:330px;height:330px;animation-duration:20s;animation-direction:reverse}
+.hero-atmosphere i:nth-child(3){top:25%;left:50%;width:520px;height:520px;margin-left:-260px;opacity:.25;animation-duration:28s}
+.hero-atmosphere i::before{content:"";position:absolute;top:50%;left:-4px;width:8px;height:8px;border-radius:50%;background:#efbd45;box-shadow:0 0 18px #d8a32e}
+.hero .gold-wave{animation:waveFloat 6s ease-in-out infinite}
+.hero .event-logos img{animation:logoFloat 4.8s ease-in-out infinite}
+.hero .event-logos img:nth-child(2){animation-delay:.35s}.hero .event-logos img:nth-child(3){animation-delay:.7s}
+.hero-content>*{opacity:0;transform:translateY(24px);animation:heroContentIn .72s cubic-bezier(.22,.72,.2,1) forwards}
+.hero-content>*:nth-child(2){animation-delay:.14s}.hero-content>*:nth-child(3){animation-delay:.28s}.hero-content>*:nth-child(4){animation-delay:.42s}
+.timeline li::after{animation:timelinePulse 2.6s ease-in-out infinite}.timeline li:nth-child(2)::after{animation-delay:.45s}.timeline li:nth-child(3)::after{animation-delay:.9s}
+.section-heading.decorated::before,.section-heading.decorated::after{height:2px;top:177px;background:linear-gradient(90deg,transparent 0%,rgba(171,119,20,.18) 14%,#dba936 44%,#fff1b0 50%,#dba936 56%,rgba(171,119,20,.18) 86%,transparent 100%);background-size:220% 100%;filter:drop-shadow(0 0 6px rgba(232,181,52,.55));animation:headingShimmer 3.8s linear infinite}
+.section-heading.decorated::after{animation-direction:reverse}
+#greetings .section-heading{background-image:none}
+#greetings .section-heading::before,#greetings .section-heading::after{content:"";position:absolute;top:181px;width:min(29vw,397px);height:2px;background:linear-gradient(90deg,transparent 0%,rgba(171,119,20,.18) 14%,#dba936 44%,#fff1b0 50%,#dba936 56%,rgba(171,119,20,.18) 86%,transparent 100%);background-size:220% 100%;filter:drop-shadow(0 0 6px rgba(232,181,52,.55));animation:headingShimmer 3.8s linear infinite}
+#greetings .section-heading::before{left:3%}#greetings .section-heading::after{right:3%;animation-direction:reverse}
+.site-header{transition:background .3s ease,border-color .3s ease,box-shadow .3s ease}
+.site-header.is-scrolled{background:rgba(9,9,8,.92);border-color:rgba(212,163,46,.36);box-shadow:0 14px 34px rgba(0,0,0,.38);backdrop-filter:blur(14px)}
+.site-header nav a{position:relative;transition:color .22s ease}
+.site-header nav a::after{content:"";position:absolute;left:50%;right:50%;bottom:-10px;height:2px;background:linear-gradient(90deg,#a36b12,#f5c245);transition:left .25s ease,right .25s ease}
+.site-header nav a:hover::after,.site-header nav a.active::after{left:0;right:0}
+.motion-ready main>.section .section-heading,.motion-ready main>.section .arena-heading{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.motion-ready main>.section .greeting-grid,.motion-ready main>.section .schedule-grid,.motion-ready main>.section .sports-grid,.motion-ready main>.section .gallery-grid,.motion-ready main>.section .support-feature,.motion-ready main>.section .support-subtitle,.motion-ready main>.section .support-grid{opacity:0;transform:translateY(34px);transition:opacity .8s .14s ease,transform .8s .14s cubic-bezier(.22,.72,.2,1)}
+.motion-ready main>.section.is-revealed .section-heading,.motion-ready main>.section.is-revealed .arena-heading,.motion-ready main>.section.is-revealed .greeting-grid,.motion-ready main>.section.is-revealed .schedule-grid,.motion-ready main>.section.is-revealed .sports-grid,.motion-ready main>.section.is-revealed .gallery-grid,.motion-ready main>.section.is-revealed .support-feature,.motion-ready main>.section.is-revealed .support-subtitle,.motion-ready main>.section.is-revealed .support-grid{opacity:1;transform:none}
+.greeting-card,.schedule-card,.gallery-grid article,.support-grid article{transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+.greeting-card:hover,.schedule-card:hover,.support-grid article:hover{transform:translateY(-6px);border-color:#c79629;box-shadow:0 18px 38px rgba(0,0,0,.45),0 0 0 1px rgba(212,163,46,.08)}
+@keyframes heroLightSweep{to{transform:translate3d(7%,-3%,0) scale(1.08)}}
+@keyframes heroGoldScan{0%,62%{transform:translateX(-110%)}85%,100%{transform:translateX(110%)}}
+@keyframes heroOrbit{to{transform:rotate(360deg)}}
+@keyframes waveFloat{50%{transform:translateY(7px)}}
+@keyframes logoFloat{50%{transform:translateY(-7px)}}
+@keyframes heroContentIn{to{opacity:1;transform:none}}
+@keyframes timelinePulse{50%{transform:translateX(-50%) scale(1.2);box-shadow:0 0 24px rgba(225,181,76,.55)}}
+@keyframes headingShimmer{to{background-position:-220% 0}}
+@media(max-width:700px){.hero-atmosphere i:nth-child(1){left:-90px}.hero-atmosphere i:nth-child(2){right:-170px}.hero-atmosphere i:nth-child(3){width:350px;height:350px;margin-left:-175px}.hero-atmosphere::after{opacity:.55}}
+@media(prefers-reduced-motion:reduce){.hero-atmosphere::before,.hero-atmosphere::after,.hero-atmosphere i,.hero .gold-wave,.hero .event-logos img,.hero-content>*,.timeline li::after,.section-heading.decorated::before,.section-heading.decorated::after,#greetings .section-heading::before,#greetings .section-heading::after{animation:none}.hero-content>*{opacity:1;transform:none}.greeting-card,.schedule-card,.gallery-grid article,.support-grid article{transition:none}}
+
+/* Richer continuous atmosphere for every public-home section. */
+.panel.section{isolation:isolate;background-image:radial-gradient(circle at 18% 26%,rgba(145,92,8,.23),transparent 26%),radial-gradient(circle at 82% 72%,rgba(102,62,5,.2),transparent 28%),repeating-linear-gradient(90deg,transparent 0 79px,rgba(214,161,42,.018) 80px),repeating-linear-gradient(0deg,transparent 0 79px,rgba(214,161,42,.014) 80px),linear-gradient(145deg,#030303,#090704 50%,#020202)!important;background-position:calc(var(--page-scroll,0px) * -.008) 0,calc(var(--page-scroll,0px) * .01) 0,0 0,0 0,0 0}
+.panel.section::before{border-color:rgba(181,132,34,.68);box-shadow:inset 0 0 30px rgba(202,144,25,.025),0 0 26px rgba(0,0,0,.42)}
+.panel.section::after{border-color:transparent;background:linear-gradient(115deg,transparent 22%,rgba(245,196,76,.07) 45%,rgba(255,235,161,.2) 50%,rgba(245,196,76,.07) 55%,transparent 78%);background-size:260% 100%;mix-blend-mode:screen;animation:sectionLightPass 8s ease-in-out infinite}
+.ambient-dust{position:absolute;z-index:0;inset:22px 24px;overflow:hidden;border-radius:22px;pointer-events:none;transform:translateY(calc(var(--page-scroll,0px) * -.012))}
+.ambient-dust i{position:absolute;left:var(--x);top:var(--y);width:var(--size);height:var(--size);border-radius:50%;background:#edb83b;box-shadow:0 0 8px rgba(237,184,59,.8),0 0 18px rgba(212,148,25,.35);opacity:.12;animation:dustDrift var(--duration) var(--delay) ease-in-out infinite}
+.ambient-dust i:nth-child(3n){background:#fff0b2}.ambient-dust i:nth-child(4n){border-radius:0;transform:rotate(45deg)}
+.motion-ready main>.section .greeting-card,.motion-ready main>.section .schedule-card,.motion-ready main>.section .sport-card,.motion-ready main>.section .gallery-grid>a,.motion-ready main>.section .support-grid article{opacity:0;transform:translateY(30px) scale(.975);transition:opacity .5s ease,transform .62s cubic-bezier(.22,.72,.2,1),border-color .28s ease,box-shadow .28s ease}
+.motion-ready main>.section.is-revealed .greeting-card,.motion-ready main>.section.is-revealed .schedule-card,.motion-ready main>.section.is-revealed .sport-card,.motion-ready main>.section.is-revealed .gallery-grid>a,.motion-ready main>.section.is-revealed .support-grid article{opacity:1;transform:none}
+.motion-ready main>.section.is-revealed :is(.greeting-card,.schedule-card,.sport-card,.gallery-grid>a,.support-grid article):nth-child(2){transition-delay:.09s}
+.motion-ready main>.section.is-revealed :is(.greeting-card,.schedule-card,.sport-card,.gallery-grid>a,.support-grid article):nth-child(3){transition-delay:.18s}
+.motion-ready main>.section.is-revealed :is(.greeting-card,.schedule-card,.sport-card,.gallery-grid>a,.support-grid article):nth-child(4){transition-delay:.27s}
+.motion-ready main>.section.is-revealed :is(.greeting-card,.schedule-card,.sport-card,.gallery-grid>a,.support-grid article):nth-child(5){transition-delay:.36s}
+.motion-ready main>.section.is-revealed :is(.greeting-card,.schedule-card,.sport-card,.gallery-grid>a,.support-grid article):nth-child(6){transition-delay:.45s}
+.section-heading h2,.arena-heading h2{position:relative;text-shadow:0 0 32px rgba(218,164,42,.12)}
+.section-heading h2::after,.arena-heading h2::after{content:"";position:absolute;left:50%;bottom:-5px;width:44px;height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,#ffe59b,transparent);box-shadow:0 0 10px #d9a52d;animation:titleGlint 2.8s ease-in-out infinite}
+.section-heading.left h2::after,.arena-heading h2::after{left:0;transform:none}.arena-heading h2::after{bottom:-13px}
+@keyframes sectionLightPass{0%,60%{background-position:140% 0}100%{background-position:-120% 0}}
+@keyframes dustDrift{0%,100%{opacity:.08;translate:0 10px;scale:.7}45%{opacity:.6}55%{opacity:.45;translate:14px -18px;scale:1.25}}
+@keyframes titleGlint{0%,100%{opacity:.25;transform:translateX(-50%) scaleX(.65)}50%{opacity:1;transform:translateX(-50%) scaleX(1.45)}}
+@media(max-width:700px){.ambient-dust i:nth-child(n+9){display:none}.panel.section::after{opacity:.65}.motion-ready main>.section.is-revealed :is(.greeting-card,.schedule-card,.sport-card,.gallery-grid>a,.support-grid article){transition-delay:0s}}
+@media(prefers-reduced-motion:reduce){.panel.section::after,.ambient-dust i,.section-heading h2::after,.arena-heading h2::after{animation:none}.ambient-dust{display:none}.motion-ready main>.section :is(.greeting-card,.schedule-card,.sport-card,.gallery-grid>a,.support-grid article){opacity:1;transform:none}}
+
+/* Bridgestone 50th Golden Era identity — tire engineering meets six sports. */
+.golden-era-emblem{position:absolute;z-index:1;right:72px;bottom:68px;width:290px;height:290px;pointer-events:none;opacity:.72}
+.tire-ring{position:absolute;inset:30px;display:grid;place-items:center;border:2px solid rgba(235,181,58,.4);border-radius:50%;background:radial-gradient(circle,rgba(216,157,31,.12) 0 37%,transparent 38%);filter:drop-shadow(0 0 16px rgba(214,158,38,.25));animation:goldenTireSpin 24s linear infinite}
+.tire-ring::before{content:"";position:absolute;inset:6px;border-radius:50%;background:repeating-conic-gradient(from 4deg,rgba(240,190,68,.8) 0 3deg,transparent 3deg 12deg);mask:radial-gradient(circle,transparent 0 68%,#000 69%)}
+.tire-ring::after{content:"";position:absolute;inset:32px;border-radius:50%;border:1px dashed rgba(255,218,120,.4)}
+.tire-ring span,.tire-ring b,.tire-ring img{position:absolute;left:50%;transform:translateX(-50%);color:#e9b43c;text-shadow:0 0 20px rgba(229,171,45,.38);animation:goldenTireCounter 24s linear infinite}
+.tire-ring .bs-fifty{top:57px;display:flex;align-items:center;justify-content:center;gap:13px;width:146px;font:italic 900 76px/.88 'Barlow Condensed';letter-spacing:-2px;transform:translateX(-50%) skewX(-8deg)}.tire-ring .bs-fifty em{position:relative;font-style:italic;background:linear-gradient(112deg,#a46d11 0%,#ffe38c 38%,#d79b20 65%,#fff0b0 88%);background-clip:text;-webkit-background-clip:text;color:transparent;-webkit-text-stroke:1px rgba(255,226,145,.22);filter:drop-shadow(5px 5px 0 rgba(54,32,2,.6));clip-path:polygon(12% 0,100% 0,89% 23%,76% 23%,93% 42%,82% 100%,0 100%,12% 76%,24% 76%,7% 57%,18% 0)}.tire-ring .bs-fifty em+em{clip-path:polygon(17% 0,100% 0,88% 100%,0 100%,12% 78%,22% 78%,8% 58%)}.tire-ring .bs-fifty i{position:absolute;left:18px;top:4px;width:13px;height:28px;background:linear-gradient(135deg,#f04a2d 0 48%,#b91f15 49% 100%);clip-path:polygon(0 0,100% 0,45% 100%,0 100%);filter:drop-shadow(0 0 5px rgba(224,52,33,.42))}.tire-ring img{top:135px;width:116px;height:18px;object-fit:cover;object-position:top;filter:sepia(1) saturate(1.6) brightness(1.25) drop-shadow(0 0 7px rgba(230,177,57,.32))}.tire-ring b{top:159px;white-space:nowrap;font:800 8px Inter;letter-spacing:3.2px;color:#f2c453}
+.sport-orbit{position:absolute;inset:0;border:1px solid rgba(204,150,36,.18);border-radius:50%;animation:sportOrbitSpin 32s linear infinite}
+.sport-orbit::before{content:"";position:absolute;inset:18px;border:1px dashed rgba(222,168,46,.22);border-radius:50%}
+.sport-orbit i{position:absolute;display:grid;place-items:center;width:34px;height:34px;border:1px solid rgba(234,184,67,.6);border-radius:50%;background:rgba(6,6,5,.86);color:#edb83b;font:700 10px Inter;box-shadow:0 0 16px rgba(212,157,34,.18);animation:sportOrbitCounter 32s linear infinite}
+.sport-orbit i:nth-child(1){top:-17px;left:128px}.sport-orbit i:nth-child(2){top:55px;right:3px}.sport-orbit i:nth-child(3){right:3px;bottom:55px}.sport-orbit i:nth-child(4){bottom:-17px;left:128px}.sport-orbit i:nth-child(5){bottom:55px;left:3px}.sport-orbit i:nth-child(6){top:55px;left:3px}
+.golden-era-emblem.without-number .tire-ring img{top:92px;width:142px;height:24px;filter:none}
+.golden-era-emblem.without-number .tire-ring b{top:127px;font-size:9px;letter-spacing:3.6px}
+.golden-era-emblem.without-number .tire-ring::after{inset:27px}
+.moving-tread{position:absolute;z-index:0;top:0;bottom:0;left:34px;width:26px;overflow:hidden;opacity:.17;pointer-events:none;mask:linear-gradient(transparent,#000 15% 85%,transparent)}
+.moving-tread::before{content:"";position:absolute;inset:-180px 0;background:repeating-linear-gradient(155deg,transparent 0 12px,#d9a52f 13px 18px,transparent 19px 28px),repeating-linear-gradient(25deg,transparent 0 18px,rgba(255,220,121,.75) 19px 22px,transparent 23px 36px);animation:treadTravel 10s linear infinite}
+.panel.section:nth-of-type(even) .moving-tread{left:auto;right:34px;transform:scaleX(-1)}
+.panel.section .arena-heading::before,.panel.section .section-heading::before{filter:drop-shadow(0 0 7px rgba(231,177,49,.5))}
+.panel.section.is-revealed .moving-tread{opacity:.28;transition:opacity .8s ease}
+.panel.section:is(#greetings,#schedule,#sports,#gallery,#support)::selection{background:#d4a32e;color:#080808}
+@keyframes goldenTireSpin{to{transform:rotate(360deg)}}
+@keyframes goldenTireCounter{to{transform:translateX(-50%) rotate(-360deg)}}
+@keyframes sportOrbitSpin{to{transform:rotate(-360deg)}}
+@keyframes sportOrbitCounter{to{transform:rotate(360deg)}}
+@keyframes treadTravel{to{transform:translateY(180px)}}
+@media(max-width:1100px){.golden-era-emblem{right:28px;bottom:52px;width:230px;height:230px;opacity:.5}.tire-ring span{top:42px;gap:6px;font-size:58px}.tire-ring img{top:100px;width:90px;height:14px}.tire-ring b{top:119px;font-size:6px}.sport-orbit i:nth-child(1),.sport-orbit i:nth-child(4){left:98px}}
+@media(max-width:700px){.golden-era-emblem{right:-52px;bottom:46px;width:190px;height:190px;opacity:.38}.tire-ring{inset:25px}.tire-ring span{top:30px;gap:5px;font-size:47px}.tire-ring img{top:77px;width:75px;height:12px}.tire-ring b{top:93px;font-size:5px;letter-spacing:1.5px}.sport-orbit i{width:28px;height:28px;font-size:8px}.sport-orbit i:nth-child(1){top:-14px;left:81px}.sport-orbit i:nth-child(2){top:36px;right:0}.sport-orbit i:nth-child(3){right:0;bottom:36px}.sport-orbit i:nth-child(4){bottom:-14px;left:81px}.sport-orbit i:nth-child(5){bottom:36px;left:0}.sport-orbit i:nth-child(6){top:36px;left:0}.moving-tread{left:10px;width:14px}.panel.section:nth-of-type(even) .moving-tread{right:10px}}
+@media(prefers-reduced-motion:reduce){.tire-ring,.tire-ring span,.tire-ring b,.sport-orbit,.sport-orbit i,.moving-tread::before{animation:none}}
+
+/* Large tire sidewall signatures connect every section to Bridgestone. */
+.section-tire-mark{position:absolute;z-index:0;right:-250px;top:50%;width:610px;height:610px;transform:translateY(-50%);border-radius:50%;background:radial-gradient(circle,transparent 0 45%,#080807 45.5% 59%,#16140f 59.5% 70%,#050505 70.5% 79%,transparent 79.5%),radial-gradient(circle at 38% 35%,rgba(255,213,110,.12),transparent 42%);box-shadow:0 0 80px rgba(137,87,8,.12);opacity:.82;animation:sectionTireRotate 42s linear infinite;pointer-events:none}
+.panel.section:nth-of-type(even) .section-tire-mark{right:auto;left:-210px;animation-direction:reverse}
+.section-tire-mark::before,.section-tire-mark::after{content:"";position:absolute;border-radius:50%}
+.section-tire-mark::before{inset:76px;border:1px solid rgba(234,185,72,.16);box-shadow:inset 0 0 0 18px rgba(0,0,0,.5),inset 0 0 0 20px rgba(226,173,54,.08)}
+.section-tire-mark::after{inset:118px;border:2px solid rgba(237,190,80,.12);background:radial-gradient(circle,#090908 0 56%,transparent 57%)}
+.tire-sidewall{position:absolute;inset:29px;border-radius:50%;background:repeating-conic-gradient(from 2deg,rgba(203,153,45,.24) 0 4deg,#080807 4deg 10deg,rgba(229,177,57,.09) 10deg 13deg,#090908 13deg 19deg);mask:radial-gradient(circle,transparent 0 72%,#000 72.5%)}
+.tire-sidewall i{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(247,207,111,.12)}
+.tire-sidewall i:nth-child(2){inset:18px}.tire-sidewall i:nth-child(3){inset:36px;border-style:dashed}
+.alloy-rim{position:absolute;inset:151px;border:7px solid rgba(171,134,56,.22);border-radius:50%;background:radial-gradient(circle,#080808 0 13%,#a77d2d 14% 17%,#17150f 18% 28%,transparent 29%),radial-gradient(circle at 36% 30%,rgba(255,232,160,.24),transparent 40%),#0c0c0b;box-shadow:inset 0 0 0 5px #29251b,inset 0 0 28px #000,0 0 0 2px rgba(231,183,73,.12);animation:alloySpin 12s linear infinite}
+.alloy-rim>i{position:absolute;left:50%;top:50%;width:10px;height:46%;margin-left:-5px;transform-origin:50% 0;background:linear-gradient(90deg,#2b281f,#b28b3e 46%,#3b3423 55%,#111);clip-path:polygon(18% 0,82% 0,100% 100%,0 100%)}
+.alloy-rim>i:nth-child(1){transform:rotate(0deg)}.alloy-rim>i:nth-child(2){transform:rotate(60deg)}.alloy-rim>i:nth-child(3){transform:rotate(120deg)}.alloy-rim>i:nth-child(4){transform:rotate(180deg)}.alloy-rim>i:nth-child(5){transform:rotate(240deg)}.alloy-rim>i:nth-child(6){transform:rotate(300deg)}
+.alloy-rim>b{position:absolute;z-index:2;inset:42%;display:grid;place-items:center;border:1px solid rgba(239,195,91,.45);border-radius:50%;background:radial-gradient(circle at 38% 34%,#5c4a25,#17140d 42%,#070707 72%);box-shadow:inset 0 0 0 3px #090909,0 0 12px rgba(218,164,47,.25)}
+.tire-brand-arc{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 9px rgba(224,171,54,.2))}
+.tire-brand-arc text{fill:rgba(239,193,79,.42);font:italic 800 19px 'Barlow Condensed';letter-spacing:4px}
+.panel.section.is-revealed .section-tire-mark{opacity:.92;transition:opacity 1s ease}
+.greeting-card,.schedule-card,.sport-card,.gallery-grid article,.support-feature blockquote,.support-grid article{backdrop-filter:blur(1px)}
+.greeting-card::before,.schedule-card::before,.sport-card::before,.gallery-grid article::before,.support-grid article::before{content:"";position:absolute;z-index:0;inset:0;border-radius:inherit;background:linear-gradient(125deg,transparent 0 67%,rgba(218,166,50,.035) 68% 72%,transparent 73%);pointer-events:none}
+.greeting-card>* ,.schedule-card>* ,.sport-card>* ,.gallery-grid article>* ,.support-grid article>*{position:relative;z-index:1}
+@keyframes sectionTireRotate{to{transform:translateY(-50%) rotate(360deg)}}
+@keyframes alloySpin{to{transform:rotate(-360deg)}}
+@media(max-width:1100px){.section-tire-mark{right:-330px;opacity:.58}.panel.section:nth-of-type(even) .section-tire-mark{left:-330px}}
+@media(max-width:700px){.section-tire-mark{width:390px;height:390px;right:-260px;opacity:.46}.panel.section:nth-of-type(even) .section-tire-mark{left:-260px}.section-tire-mark::before{inset:49px}.section-tire-mark::after{inset:76px}.tire-sidewall{inset:19px}.alloy-rim{inset:97px;border-width:5px}.tire-brand-arc text{font-size:18px;letter-spacing:3px}.golden-era-emblem.without-number .tire-ring img{top:53px;width:88px;height:15px}.golden-era-emblem.without-number .tire-ring b{top:74px;font-size:5px;letter-spacing:1.7px}}
+@media(prefers-reduced-motion:reduce){.section-tire-mark,.alloy-rim{animation:none}}
 
 @media(max-width:430px){
   #support .support-feature blockquote{grid-template-columns:minmax(0,1fr) 124px;column-gap:12px;padding-left:36px;padding-right:36px}
@@ -597,3 +903,13 @@ main::before{inset:8px;border-radius:16px}
   #support .support-feature .support-media{height:190px}
   #support .support-feature .support-media::after{font-size:16px;letter-spacing:1px}
 }
+
+/* Absolute final paint layer: prevents legacy rules from restoring panel seams. */
+main{background:#020202}
+.hero{background-image:radial-gradient(circle at 50% 42%,rgba(91,57,4,.48),transparent 34%),linear-gradient(180deg,#020202 0%,#080704 48%,#020202 100%)!important}
+.panel.section{margin-top:-1px;background-image:linear-gradient(180deg,#020202 0%,#050402 16%,#090704 50%,#050402 84%,#020202 100%)!important;background-position:0 0!important}
+.panel.section::before{inset:-2px 0 auto!important;width:auto!important;height:112px!important;border:0!important;border-radius:0!important;background:linear-gradient(180deg,#020202 0%,rgba(2,2,2,.82) 28%,transparent 100%)!important;box-shadow:none!important}
+.section-heading h2,.section-heading.left h2,.arena-heading h2,#support .section-heading h2,.support-subtitle{font-family:'Barlow Condensed',Arial,sans-serif!important;font-style:italic!important;font-weight:800!important;letter-spacing:.055em!important;text-transform:uppercase;text-wrap:balance}
+.section-heading h2,.section-heading.left h2,#support .section-heading h2{font-size:clamp(44px,4vw,58px)!important;line-height:.98!important}
+.arena-heading h2{font-size:clamp(42px,3.7vw,54px)!important;line-height:1!important}.support-subtitle{font-size:clamp(28px,2.4vw,36px)!important;line-height:1.05!important}
+@media(max-width:700px){.section-heading h2,.section-heading.left h2,#support .section-heading h2,.arena-heading h2{font-size:34px!important;line-height:1!important}.support-subtitle{font-size:25px!important}}

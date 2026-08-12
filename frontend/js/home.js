@@ -113,6 +113,9 @@ if (apiBase) {
 
 const header = document.querySelector('.site-header');
 const toggle = document.querySelector('.menu-toggle');
+const updateHeaderState = () => header.classList.toggle('is-scrolled', window.scrollY > 32);
+window.addEventListener('scroll', updateHeaderState, { passive:true });
+updateHeaderState();
 toggle.addEventListener('click', () => {
   const open = header.classList.toggle('nav-open');
   toggle.setAttribute('aria-expanded', String(open));
@@ -127,6 +130,65 @@ const observer = new IntersectionObserver(entries => entries.forEach(entry => {
   if (entry.isIntersecting) links.forEach(link => link.classList.toggle('active', link.hash === `#${entry.target.id}`));
 }), { rootMargin:'-35% 0px -55%' });
 sections.forEach(section => observer.observe(section));
+
+// Restrained entrance motion keeps the public homepage lively without
+// changing its content hierarchy. Content remains visible without JavaScript.
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.documentElement.classList.add('motion-ready');
+  document.querySelectorAll('main > section').forEach((section, sectionIndex) => {
+    const dust = document.createElement('div');
+    dust.className = 'ambient-dust';
+    dust.setAttribute('aria-hidden', 'true');
+    dust.innerHTML = Array.from({ length: 14 }, (_, index) => {
+      const x = (index * 37 + sectionIndex * 19) % 96;
+      const y = (index * 23 + sectionIndex * 31) % 90;
+      const size = 2 + (index % 3);
+      const delay = -((index * 1.17 + sectionIndex) % 8);
+      const duration = 6 + (index % 5) * 1.4;
+      return `<i style="--x:${x}%;--y:${y}%;--size:${size}px;--delay:${delay}s;--duration:${duration}s"></i>`;
+    }).join('');
+    section.prepend(dust);
+    if (!section.classList.contains('hero')) {
+      const anniversaryArtwork = {
+        greetings: ['from-generation.webp', 'brand-motto-wide'],
+        schedule: ['drive-growth.webp', 'brand-motto-wide'],
+        sports: ['e8-commitment.webp', 'brand-emblem-round'],
+        gallery: ['bridgestone-50th.webp', 'brand-emblem-tall'],
+        support: ['bridgestone-gold.webp', 'brand-motto-wide'],
+      }[section.id];
+      if (anniversaryArtwork) {
+        const brandArtwork = document.createElement('div');
+        brandArtwork.className = `section-brand-art ${anniversaryArtwork[1]}`;
+        brandArtwork.setAttribute('aria-hidden', 'true');
+        brandArtwork.innerHTML = `<img src="assets/images/anniversary/${anniversaryArtwork[0]}" alt="">`;
+        section.prepend(brandArtwork);
+      }
+      const tread = document.createElement('div');
+      tread.className = 'moving-tread';
+      tread.setAttribute('aria-hidden', 'true');
+      section.prepend(tread);
+      const tireMark = document.createElement('div');
+      tireMark.className = 'section-tire-mark';
+      tireMark.setAttribute('aria-hidden', 'true');
+      tireMark.innerHTML = '<div class="tire-sidewall"><i></i><i></i><i></i></div><div class="alloy-rim"><i></i><i></i><i></i><i></i><i></i><i></i><b></b></div><svg class="tire-brand-arc" viewBox="0 0 610 610"><defs><path id="tire-brand-path-' + sectionIndex + '" d="M 72 315 A 233 233 0 0 1 538 315"/></defs><text><textPath href="#tire-brand-path-' + sectionIndex + '" startOffset="50%" text-anchor="middle">BRIDGESTONE · 50TH ANNIVERSARY</textPath></text></svg>';
+      section.prepend(tireMark);
+    }
+  });
+  const revealObserver = new IntersectionObserver(entries => entries.forEach(entry => {
+    entry.target.classList.toggle('is-revealed', entry.isIntersecting);
+  }), { rootMargin: '0px 0px -12%', threshold: .08 });
+  document.querySelectorAll('main > .section').forEach(section => revealObserver.observe(section));
+
+  let scrollFrame;
+  const updateScrollMotion = () => {
+    scrollFrame = null;
+    document.documentElement.style.setProperty('--page-scroll', `${window.scrollY}px`);
+  };
+  window.addEventListener('scroll', () => {
+    if (!scrollFrame) scrollFrame = requestAnimationFrame(updateScrollMotion);
+  }, { passive:true });
+  updateScrollMotion();
+}
 const sportsList = document.querySelector('#sports-list');
 const activeSportName = document.querySelector('.arena-active-name');
 const arenaHint = document.querySelector('.arena-hint');
