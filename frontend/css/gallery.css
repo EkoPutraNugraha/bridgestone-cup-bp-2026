@@ -28,3 +28,18 @@
   .lightbox-close{top:17px;right:17px}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* Gallery navigation: language belongs in the top bar, video beside Fishing. */
+.gallery-topbar>.gallery-language-toggle{justify-self:end;margin:0}
+.gallery-language-toggle{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid #66501d;border-radius:999px;background:#080704;color:#aaa;cursor:pointer}
+.gallery-language-toggle span{min-width:30px;padding:7px 9px;border-radius:999px;font:700 10px Inter,sans-serif;text-align:center}
+.gallery-language-toggle span.active{background:#d6a42c;color:#090704}
+.gallery-filters .gallery-video-link{border-color:#7a5918;color:#e5b13b;background:linear-gradient(135deg,rgba(76,52,7,.45),rgba(10,9,6,.9))}
+.gallery-filters .gallery-video-link:hover,.gallery-filters .gallery-video-link:focus-visible{border-color:#f0be44;color:#ffe29a;box-shadow:0 0 18px rgba(214,164,44,.16);outline:none}
+.gallery-video-link span{margin-left:4px;font-size:13px}
+
+@media(max-width:520px){
+  .gallery-topbar{grid-template-columns:auto minmax(0,1fr) auto}
+  .gallery-topbar>.gallery-language-toggle{grid-column:auto;justify-self:end;margin:0}
+  .gallery-language-toggle span{min-width:27px;padding:6px 7px;font-size:9px}
+}

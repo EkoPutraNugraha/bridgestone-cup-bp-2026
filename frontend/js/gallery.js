@@ -11,7 +11,9 @@ window.addEventListener('publiclanguagechange', () => location.reload());
 
 if (filters) {
   const all = `<a class="${document.querySelector('#collection-grid') ? 'active' : ''}" href="gallery.html">ALL</a>`;
-  filters.innerHTML = all + gallerySports.map(sport => `<a class="${sport.id === selectedId ? 'active' : ''}" href="gallery-sport.html?sport=${sport.id}">${sport.name}</a>`).join('');
+  const sports = gallerySports.map(sport => `<a class="${sport.id === selectedId ? 'active' : ''}" href="gallery-sport.html?sport=${sport.id}">${sport.name}</a>`).join('');
+  const video = '<a class="gallery-video-link" href="https://drive.google.com/drive/folders/1VaQ7tqffTW3U4CJslgH-LlO7anHGg8Hy?usp=drive_link" target="_blank" rel="noopener noreferrer">VIDEO <span aria-hidden="true">↗</span></a>';
+  filters.innerHTML = all + sports + video;
 }
 
 async function loadGallery(path = '') {
