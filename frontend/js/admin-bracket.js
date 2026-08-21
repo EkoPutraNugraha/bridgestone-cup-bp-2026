@@ -21,14 +21,40 @@ let groupBracketMode = false;
 const publicSportLink = document.querySelector('#public-sport-link');
 let activeBracket = null;
 
+const categoryTournamentIds = {
+  badminton: { singles: 'badminton-singles-bp-2026', doubles: 'badminton-bp-2026' },
+  'table-tennis': { singles: 'table-tennis-bp-2026', doubles: 'table-tennis-doubles-bp-2026' },
+};
+
+function categoryForTournament(sport, tournamentId) {
+  return Object.entries(categoryTournamentIds[sport] || {})
+    .find(([, id]) => id === tournamentId)?.[0] || null;
+}
+
+function updatePublicSportLink() {
+  if (!publicSportLink || !elements.sport.value) return;
+  const category = categoryForTournament(elements.sport.value, elements.tournament.value);
+  publicSportLink.href = `${elements.sport.value}.html${category ? `?category=${category}` : ''}#bracket`;
+}
+
 function applyGroupBracketMode() {
-if (groupBracketMode) {
-  document.body.classList.add('group-bracket-mode');
-  elements.title.textContent = 'Memuat bracket hasil grup…';
-  elements.status.textContent = 'Peserta diambil otomatis dari hasil Group Standing.';
-  elements.workspace.innerHTML = '<div class="empty-state"><strong>Memuat bracket…</strong><span>Peserta berasal dari hasil kelolosan grup.</span></div>';
-}}
-if (requestedSport && publicSportLink) publicSportLink.href = `${requestedSport}.html#bracket`;
+  document.body.classList.toggle('group-bracket-mode', groupBracketMode);
+  if (groupBracketMode) {
+    elements.title.textContent = 'Memuat bracket hasil grup…';
+    elements.status.textContent = 'Peserta diambil otomatis dari hasil Group Standing.';
+    elements.workspace.innerHTML = '<div class="empty-state"><strong>Memuat bracket…</strong><span>Peserta berasal dari hasil kelolosan grup.</span></div>';
+  }
+}
+
+async function syncGroupBracketMode() {
+  groupBracketMode = false;
+  if (elements.tournament.value) {
+    const payload = await api(`/tournaments/${elements.tournament.value}/competition-format`);
+    groupBracketMode = Boolean(payload.data?.usesGroupStage);
+  }
+  applyGroupBracketMode();
+  updatePublicSportLink();
+}
 
 const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, character => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
@@ -122,6 +148,17 @@ async function loadTournaments() {
     .join('');
   if (requestedTournament && [...elements.tournament.options].some(option => option.value === requestedTournament)) {
     elements.tournament.value = requestedTournament;
+  } else if (categoryTournamentIds[slug]) {
+    try {
+      const categoryPayload = await api(`/sports/${slug}/competition-categories`);
+      const activeCategory = categoryPayload.data?.activeCategories?.[0];
+      const preferredId = categoryTournamentIds[slug][activeCategory];
+      if (preferredId && [...elements.tournament.options].some(option => option.value === preferredId)) {
+        elements.tournament.value = preferredId;
+      }
+    } catch {
+      // Tetap gunakan turnamen pertama bila pengaturan kategori belum tersedia.
+    }
   }
   const disabled = elements.tournament.options.length === 0;
   [elements.preview, elements.save, elements.regenerate, elements.load].forEach(button => { button.disabled = disabled; });
@@ -131,7 +168,6 @@ async function loadTournaments() {
 
 async function initialize() {
   try {
-    if(requestedSport){const format=await api(`/tournaments/${requestedTournament||`${requestedSport}-bp-2026`}/competition-format`);groupBracketMode=Boolean(format.data?.usesGroupStage);applyGroupBracketMode()}
     const payload = await api('/sports');
     elements.sport.innerHTML = payload.data
       .filter(sport => requestedSport ? sport.slug === requestedSport : sport.slug !== 'fishing')
@@ -139,7 +175,10 @@ async function initialize() {
       .join('');
     if (requestedSport && [...elements.sport.options].some(option => option.value === requestedSport)) elements.sport.value = requestedSport;
     await loadTournaments();
-    if (elements.tournament.value) await loadSavedBracket();
+    if (elements.tournament.value) {
+      await syncGroupBracketMode();
+      await loadSavedBracket();
+    }
   } catch (error) {
     const message = groupBracketMode && /not found|belum|tidak ditemukan/i.test(error.message)
       ? 'Bracket belum dibuat. Tentukan kelolosan dari Group Standing terlebih dahulu.'
@@ -276,7 +315,10 @@ elements.sport.addEventListener('change', async () => {
   elements.workspace.innerHTML = '<div class="empty-state"><strong>Memuat bracket…</strong></div>';
   try {
     await loadTournaments();
-    if (elements.tournament.value) await loadSavedBracket();
+    if (elements.tournament.value) {
+      await syncGroupBracketMode();
+      await loadSavedBracket();
+    }
   }
   catch (error) { setStatus(error.message, 'error'); }
 });
@@ -286,6 +328,7 @@ elements.tournament.addEventListener('change', async () => {
   updateParticipantSummary();
   elements.title.textContent = elements.tournament.selectedOptions[0]?.textContent || 'Bracket belum dimuat';
   elements.workspace.innerHTML = '<div class="empty-state"><strong>Memuat bracket kategori…</strong></div>';
+  await syncGroupBracketMode();
   await loadSavedBracket();
 });
 elements.preview.addEventListener('click', previewBracket);

@@ -1,21 +1,13 @@
 import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE } from './api-config.js';
 import { loadCompetitionFormat, withOptionalStanding } from './competition-format.js';
-import { apiBracketView, bracketView, scheduleView, shell, standingView } from './sports.js?v=20260821-empty-bracket';
+import { apiBracketView, scheduleView, shell, standingView } from './sports.js?v=20260821-empty-bracket';
 
 const host = document.querySelector('#sport-view');
-const localTeams = [
-  'FINAL INSP', 'BANBURY', 'OFFICE', 'EXT–BEAD',
-  'TIRE CURING', 'BIAS BUILDING', 'CURING', 'BE MANTAP',
-  'CALENDER', 'ALL ENGINEERING', 'PRODUCTION', 'QUALITY ASSURANCE',
-  'WAREHOUSE', 'MAINTENANCE', 'UTILITY', 'ENGINEERING',
-].map((name, index) => [name, [2, 1, 3, 0][index % 4]]);
-const localSchedule = [
-  ['18:00', 'FINAL INSP', 'BANBURY', 'QF'],
-  ['18:45', 'OFFICE', 'EXT–BEAD', 'QF'],
-  ['18:00', 'BANBURY', 'EXT–BEAD', 'SF'],
-  ['18:45', 'TIRE CURING', 'BIAS BUILDING', 'SF'],
-];
+const emptyBracket = `
+  <div class="public-empty-state">
+    <strong>BRACKET BELUM TERSEDIA</strong>
+  </div>`;
 
 function apiBaseUrl() {
   return API_BASE;
@@ -76,7 +68,9 @@ shell('Football', withOptionalStanding(competitionFormat,[
     return;
   }
 
-  host.innerHTML = apiBracketView('CHAMPIONSHIP BRACKET', apiData.bracket)
-    || bracketView('CHAMPIONSHIP BRACKET', localTeams, 'BANBURY');
-  host.dataset.source = apiData.bracket ? 'api' : 'fallback';
+  const hasBracket = Boolean(apiData.bracket?.participants?.length && apiData.bracket?.rounds?.length);
+  host.innerHTML = hasBracket
+    ? apiBracketView('CHAMPIONSHIP BRACKET', apiData.bracket)
+    : emptyBracket;
+  host.dataset.source = hasBracket ? 'api' : 'empty';
 });
