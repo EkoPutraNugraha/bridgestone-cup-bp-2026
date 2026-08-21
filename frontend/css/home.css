@@ -913,3 +913,63 @@ main{background:#020202}
 .section-heading h2,.section-heading.left h2,#support .section-heading h2{font-size:clamp(44px,4vw,58px)!important;line-height:.98!important}
 .arena-heading h2{font-size:clamp(42px,3.7vw,54px)!important;line-height:1!important}.support-subtitle{font-size:clamp(28px,2.4vw,36px)!important;line-height:1.05!important}
 @media(max-width:700px){.section-heading h2,.section-heading.left h2,#support .section-heading h2,.arena-heading h2{font-size:34px!important;line-height:1!important}.support-subtitle{font-size:25px!important}}
+
+/* E8 receives a focused gold spotlight without competing with sport cards. */
+#sports .section-brand-art.brand-emblem-round{
+  z-index:0;
+  isolation:isolate;
+  width:min(39vw,540px);
+  height:min(39vw,540px);
+  right:-1%;
+  opacity:.34;
+  filter:drop-shadow(0 0 18px rgba(255,199,65,.42)) drop-shadow(0 0 54px rgba(185,120,13,.3));
+  animation:e8SpotlightFloat 6.5s ease-in-out infinite alternate;
+}
+#sports .section-brand-art.brand-emblem-round::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:-18%;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,224,133,.24) 0 9%,rgba(221,164,43,.15) 28%,rgba(159,99,7,.07) 48%,transparent 69%);
+  filter:blur(12px);
+  animation:e8SpotlightGlow 3.8s ease-in-out infinite;
+}
+#sports .section-brand-art.brand-emblem-round::after{
+  content:"";
+  position:absolute;
+  z-index:2;
+  inset:5%;
+  border-radius:50%;
+  background:conic-gradient(from 210deg,transparent 0 38%,rgba(255,239,170,.28) 44%,transparent 50% 100%);
+  mix-blend-mode:screen;
+  animation:e8SpotlightSweep 7s linear infinite;
+}
+#sports .section-brand-art.brand-emblem-round img{
+  position:relative;
+  z-index:1;
+  filter:saturate(1.18) contrast(1.06) brightness(1.08);
+}
+@keyframes e8SpotlightFloat{
+  0%{transform:translateY(-50%) rotate(-2deg) scale(.98);opacity:.28}
+  100%{transform:translateY(-50%) rotate(2deg) scale(1.035);opacity:.42}
+}
+@keyframes e8SpotlightGlow{
+  0%,100%{transform:scale(.92);opacity:.62}
+  50%{transform:scale(1.07);opacity:1}
+}
+@keyframes e8SpotlightSweep{to{transform:rotate(360deg)}}
+@media(max-width:700px){
+  #sports .section-brand-art.brand-emblem-round{
+    width:360px;
+    height:360px;
+    right:-205px;
+    top:39%;
+    opacity:.28;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #sports .section-brand-art.brand-emblem-round,
+  #sports .section-brand-art.brand-emblem-round::before,
+  #sports .section-brand-art.brand-emblem-round::after{animation:none!important}
+}
