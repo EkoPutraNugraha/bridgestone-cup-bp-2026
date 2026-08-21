@@ -50,7 +50,23 @@ const liveScheduleCard = (sport, matches) => `<a class="schedule-card" data-sour
   const day = new Intl.DateTimeFormat('id-ID', { day:'2-digit', timeZone:'Asia/Jakarta' }).format(scheduledAt);
   const month = new Intl.DateTimeFormat('id-ID', { month:'short', timeZone:'Asia/Jakarta' }).format(scheduledAt).replace('.', '').toUpperCase();
   const time = new Intl.DateTimeFormat('id-ID', { hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Asia/Jakarta' }).format(scheduledAt).replace('.', ':');
-  return `<div class="schedule-row${index === 0 ? ' current' : ''}"><time datetime="${escapeHtml(match.scheduledAt)}"><b>${day}</b><small>${month}</small></time><p>${match.competitionCategory ? `<em class="schedule-category">${escapeHtml(match.competitionCategory)}</em>` : ''}${escapeHtml(match.venue || 'Venue menunggu')}<small>${time} WIB</small></p></div>`;
+
+  const homeTeam = match.homeParticipant?.name || match.teamA || '';
+  const awayTeam = match.awayParticipant?.name || match.teamB || '';
+  
+  const versusText = (homeTeam && awayTeam) 
+    ? `<strong class="schedule-teams">${escapeHtml(homeTeam)} VS ${escapeHtml(awayTeam)}</strong>` 
+    : '';
+
+  return `<div class="schedule-row${index === 0 ? ' current' : ''}">
+    <time datetime="${escapeHtml(match.scheduledAt)}"><b>${day}</b><small>${month}</small></time>
+    <p>
+      ${match.competitionCategory ? `<em class="schedule-category">${escapeHtml(match.competitionCategory)}</em>` : ''}
+      ${versusText}
+      ${escapeHtml(match.venue || 'Venue menunggu')}<small>${time} WIB</small>
+    </p>
+  </div>`;
+  // return `<div class="schedule-row${index === 0 ? ' current' : ''}"><time datetime="${escapeHtml(match.scheduledAt)}"><b>${day}</b><small>${month}</small></time><p>${match.competitionCategory ? `<em class="schedule-category">${escapeHtml(match.competitionCategory)}</em>` : ''}${escapeHtml(match.venue || 'Venue menunggu')}<small>${time} WIB</small></p></div>`;
 }).join('')}</div></a>`;
 
 export function renderSchedules(scheduleBySport = {}) {
