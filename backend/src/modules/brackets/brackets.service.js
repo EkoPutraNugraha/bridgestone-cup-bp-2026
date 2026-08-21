@@ -114,6 +114,29 @@ export async function regenerateTournamentBracket(tournamentId, input, confirmRe
   return replaceBracket(tournamentId, bracket);
 }
 
+export async function clearTournamentBracket(tournamentId, adminId) {
+  getTournament(tournamentId);
+  const existing = await findBracketByTournamentId(tournamentId);
+  const timestamp = new Date().toISOString();
+  const emptyBracket = {
+    format: "single_elimination",
+    status: "empty",
+    participantCount: 0,
+    participants: [],
+    bracketSize: 0,
+    byeCount: 0,
+    championParticipantId: null,
+    thirdPlaceParticipantId: null,
+    rounds: [],
+    tournamentId,
+    ...(existing?.topScorers ? { topScorers: existing.topScorers } : {}),
+    createdAt: existing?.createdAt || timestamp,
+    updatedAt: timestamp,
+  };
+  if (existing) return replaceBracket(tournamentId, emptyBracket);
+  return createBracket(tournamentId, emptyBracket, adminId);
+}
+
 export function validateTopScorers(input){if(!Array.isArray(input)||input.length>20)throw new AppError(422,"topScorers must be an array with at most 20 entries");return input.map((row,index)=>{const name=typeof row?.name==="string"?row.name.trim():"",team=typeof row?.team==="string"?row.team.trim():"",goals=row?.goals;if(name.length<2||name.length>120)throw new AppError(422,`Top scorer ${index+1} requires a valid name`);if(team.length<2||team.length>120)throw new AppError(422,`Top scorer ${index+1} requires a valid team`);if(!Number.isInteger(goals)||goals<0)throw new AppError(422,`Top scorer ${index+1} goals must be a non-negative integer`);return{name,team,goals}}).sort((a,b)=>b.goals-a.goals||a.name.localeCompare(b.name))}
 export async function getFutsalTopScorers(tournamentId){if(tournamentId!=="futsal-bp-2026")throw new AppError(422,"Top scorer is only available for Futsal");const bracket=await getSavedTournamentBracket(tournamentId);return bracket.topScorers||[]}
 export async function saveFutsalTopScorers(tournamentId,input){if(tournamentId!=="futsal-bp-2026")throw new AppError(422,"Top scorer is only available for Futsal");const bracket=await getSavedTournamentBracket(tournamentId);bracket.topScorers=validateTopScorers(input);bracket.updatedAt=new Date().toISOString();const saved=await replaceBracket(tournamentId,bracket);return saved.topScorers}

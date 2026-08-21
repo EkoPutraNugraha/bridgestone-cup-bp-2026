@@ -1,5 +1,6 @@
 import {
   correctMatchResult,
+  clearTournamentBracket,
   getSavedTournamentBracket,
   previewTournamentBracket,
   regenerateTournamentBracket,
@@ -31,6 +32,11 @@ export async function replaceBracket(request, response) {
     request.body.participants,
     request.body.confirmReplace,
   );
+  response.status(200).json({ success: true, data, meta: { persisted: bracketPersistence() } });
+}
+
+export async function deleteBracket(request, response) {
+  const data = await clearTournamentBracket(request.params.id, request.admin.id);
   response.status(200).json({ success: true, data, meta: { persisted: bracketPersistence() } });
 }
 

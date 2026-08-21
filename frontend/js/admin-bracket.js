@@ -71,6 +71,12 @@ function dateTimeLocalValue(value) {
 function renderBracket(bracket, source) {
   activeBracket = bracket;
   const tournamentName = elements.tournament.selectedOptions[0]?.textContent || 'Turnamen';
+  if (!bracket.participantCount || !bracket.rounds?.length) {
+    elements.title.textContent = `${tournamentName} · 0 peserta`;
+    elements.workspace.innerHTML = '<div class="empty-state"><strong>Pertandingan belum tersedia</strong></div>';
+    setStatus(`Bracket ${source} berhasil disimpan dalam kondisi kosong.`, 'success');
+    return;
+  }
   elements.title.textContent = `${tournamentName} · ${bracket.participantCount} peserta · ${bracket.bracketSize} slot · ${bracket.byeCount} BYE`;
   const visibleRounds = bracket.thirdPlaceMatch
     ? [...bracket.rounds, { name: 'Perebutan Juara 3', matches: [bracket.thirdPlaceMatch] }]
@@ -133,7 +139,7 @@ async function initialize() {
       .join('');
     if (requestedSport && [...elements.sport.options].some(option => option.value === requestedSport)) elements.sport.value = requestedSport;
     await loadTournaments();
-    if (requestedSport) await loadSavedBracket();
+    if (elements.tournament.value) await loadSavedBracket();
   } catch (error) {
     const message = groupBracketMode && /not found|belum|tidak ditemukan/i.test(error.message)
       ? 'Bracket belum dibuat. Tentukan kelolosan dari Group Standing terlebih dahulu.'
@@ -158,13 +164,38 @@ async function previewBracket() {
 
 async function saveBracket() {
   const tournamentId = elements.tournament.value;
-  setStatus('Menyimpan bracket…');
+  const participants = participantPayload();
+  const replacingExisting = Boolean(activeBracket);
+  if (participants.length === 0) {
+    if (activeBracket?.participantCount > 0
+      && !confirm('Semua peserta dihapus. Menyimpan akan mengosongkan pertandingan serta menghapus skor, jadwal, progres, dan juara lama. Lanjutkan?')) return;
+    setStatus('Menyimpan bracket kosong…');
+    try {
+      const payload = await api(`/admin/tournaments/${tournamentId}/bracket`, { method: 'DELETE' });
+      renderBracket(payload.data, 'kosong');
+    } catch (error) { setStatus(error.message, 'error'); }
+    return;
+  }
+  if (replacingExisting) {
+    const previousNames = activeBracket.participants.map(item => item.name.trim());
+    const nextNames = participants.map(item => item.name.trim());
+    const unchanged = previousNames.length === nextNames.length
+      && previousNames.every((name, index) => name === nextNames[index]);
+    if (unchanged) {
+      setStatus('Tidak ada perubahan peserta untuk disimpan.');
+      return;
+    }
+    if (!confirm('Daftar peserta berubah. Menyimpan perubahan akan membuat ulang bracket serta menghapus skor, jadwal, progres, dan juara lama. Lanjutkan?')) return;
+  }
+  setStatus(replacingExisting ? 'Memperbarui bracket…' : 'Menyimpan bracket…');
   try {
     const payload = await api(`/admin/tournaments/${tournamentId}/bracket`, {
-      method: 'POST',
-      body: JSON.stringify({ participants: participantPayload() }),
+      method: replacingExisting ? 'PUT' : 'POST',
+      body: JSON.stringify(replacingExisting
+        ? { participants, confirmReplace: true }
+        : { participants }),
     });
-    renderBracket(payload.data, 'tersimpan');
+    renderBracket(payload.data, replacingExisting ? 'setelah perubahan peserta' : 'tersimpan');
   } catch (error) { setStatus(error.message, 'error'); }
 }
 
@@ -239,9 +270,14 @@ elements.workspace.addEventListener('click', async event => {
 
 elements.participants.addEventListener('input', updateParticipantSummary);
 elements.sport.addEventListener('change', async () => {
+  activeBracket = null;
   elements.participants.value = '';
   updateParticipantSummary();
-  try { await loadTournaments(); }
+  elements.workspace.innerHTML = '<div class="empty-state"><strong>Memuat bracket…</strong></div>';
+  try {
+    await loadTournaments();
+    if (elements.tournament.value) await loadSavedBracket();
+  }
   catch (error) { setStatus(error.message, 'error'); }
 });
 elements.tournament.addEventListener('change', async () => {
