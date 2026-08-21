@@ -55,14 +55,14 @@ const liveScheduleCard = (sport, matches) => `<a class="schedule-card" data-sour
   const awayTeam = match.awayParticipant?.name || match.teamB || '';
   
   const versusText = (homeTeam && awayTeam) 
-    ? `<small class="schedule-teams">${escapeHtml(homeTeam)} VS ${escapeHtml(awayTeam)}</small>` 
+    ? `<strong class="schedule-teams">${escapeHtml(homeTeam)} VS ${escapeHtml(awayTeam)}</strong>` 
     : '';
 
   return `<div class="schedule-row${index === 0 ? ' current' : ''}">
     <time datetime="${escapeHtml(match.scheduledAt)}"><b>${day}</b><small>${month}</small></time>
     <p>
       ${match.competitionCategory ? `<em class="schedule-category">${escapeHtml(match.competitionCategory)}</em>` : ''}
-      <small>${versusText}</small>
+      ${versusText}
       ${escapeHtml(match.venue || 'Venue menunggu')}<small>${time} WIB</small>
     </p>
   </div>`;
