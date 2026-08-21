@@ -55,7 +55,7 @@ const liveScheduleCard = (sport, matches) => `<a class="schedule-card" data-sour
   const awayTeam = match.awayParticipant?.name || match.teamB || '';
   
   const versusText = (homeTeam && awayTeam) 
-    ? `<strong class="schedule-teams">${escapeHtml(homeTeam)} VS ${escapeHtml(awayTeam)}</strong>` 
+    ? `<strong class="schedule-teams">${escapeHtml(homeTeam)} <small>VS</small> ${escapeHtml(awayTeam)}</strong>` 
     : '';
 
   return `<div class="schedule-row${index === 0 ? ' current' : ''}">
