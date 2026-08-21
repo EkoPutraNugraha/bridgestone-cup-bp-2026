@@ -25,7 +25,7 @@ const pairs = [
   ['SEMUA MOMEN','ALL MOMENTS'],['SETIAP MOMEN, SATU CERITA TURNAMEN.','EVERY MOMENT, ONE TOURNAMENT STORY.'],['KOLEKSI LENGKAP CABANG OLAHRAGA','COMPLETE SPORT COLLECTION'],['MOMEN OLAHRAGA','SPORT MOMENTS'],['Memuat foto turnamen yang telah dipublikasikan.','Loading published tournament photos.'],
   ['Belum ada foto yang dipublikasikan untuk cabang olahraga ini.','No photos have been published for this sport yet.'],['Buka foto','Open photo'],['Tutup foto','Close photo'],['Foto sebelumnya','Previous photo'],['Foto berikutnya','Next photo'],
   ['SEMUA','ALL'],['GALERI','GALLERY'],['BUKA KOLEKSI','OPEN COLLECTION'],['MOMEN TURNAMEN','TOURNAMENT MOMENT'],['DIARSIPKAN','ARCHIVED'],
-  ['TIM','TEAMS'],['PASANGAN','PAIRS'],['PESERTA','PLAYERS'],['FOTO','PHOTOS'],['MOMEN','MOMENTS'],['KARTU DUKUNGAN','SUPPORT CARDS']
+  ['TIM','TEAMS'],['PASANGAN','PAIRS'],['PESERTA','PLAYERS'],['GANDA','DOUBLES'],['FOTO','PHOTOS'],['MOMEN','MOMENTS'],['KARTU DUKUNGAN','SUPPORT CARDS']
   ,['Akses pengelola','Admin access']
 ];
 
@@ -38,8 +38,8 @@ let translating = false;
 const replaceTokens = (value, lang) => {
   let output = value;
   const replacements = lang === 'en'
-    ? [[/\bTIM\b/g,'TEAMS'],[/\bPASANGAN\b/g,'PAIRS'],[/\bPESERTA\b/g,'PLAYERS'],[/\bPOIN\b/g,'POINTS'],[/\bDESEMBER\b/g,'DECEMBER'],[/\bFOTO\b/g,'PHOTOS'],[/\bMOMEN\b/g,'MOMENTS']]
-    : [[/\bTEAMS\b/g,'TIM'],[/\bPAIRS\b/g,'PASANGAN'],[/\bPLAYERS\b/g,'PESERTA'],[/\bPOINTS\b/g,'POIN'],[/\bDECEMBER\b/g,'DESEMBER'],[/\bPHOTOS\b/g,'FOTO'],[/\bMOMENTS\b/g,'MOMEN']];
+    ? [[/\bTIM\b/g,'TEAMS'],[/\bPASANGAN\b/g,'PAIRS'],[/\bPESERTA\b/g,'PLAYERS'],[/\bGANDA\b/g,'DOUBLES'],[/\bPOIN\b/g,'POINTS'],[/\bDESEMBER\b/g,'DECEMBER'],[/\bFOTO\b/g,'PHOTOS'],[/\bMOMEN\b/g,'MOMENTS']]
+    : [[/\bTEAMS\b/g,'TIM'],[/\bPAIRS\b/g,'PASANGAN'],[/\bPLAYERS\b/g,'PESERTA'],[/\bDOUBLES\b/g,'GANDA'],[/\bPOINTS\b/g,'POIN'],[/\bDECEMBER\b/g,'DESEMBER'],[/\bPHOTOS\b/g,'FOTO'],[/\bMOMENTS\b/g,'MOMEN']];
   replacements.forEach(([pattern,replacement]) => { output = output.replace(pattern,replacement); });
   return output;
 };
