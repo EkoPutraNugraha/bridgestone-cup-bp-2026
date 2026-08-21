@@ -2,7 +2,7 @@ import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE as apiBase } from './api-config.js';
 import { loadTournamentCompetitionFormat, withOptionalStanding } from './competition-format.js';
 import { loadCategories, renderCategorySelector, selectedCategory, tournamentByCategory } from './competition-categories.js';
-import { apiBracketView, scheduleView, shell, standingView } from './sports.js?v=20260809-clean-empty-copy';
+import { apiBracketView, scheduleView, shell, standingView } from './sports.js?v=20260821-empty-bracket';
 
 const host = document.querySelector('#sport-view');
 

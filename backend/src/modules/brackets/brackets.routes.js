@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authenticateAdmin } from "../../middleware/admin-auth.js";
 import {
   createBracket,
+  deleteBracket,
   getBracket,
   previewBracket,
   patchMatchSchedule,
@@ -20,6 +21,7 @@ export function createBracketsRouter(adminAuthentication = authenticateAdmin) {
   router.post("/tournaments/:id/bracket/preview", previewBracket);
   router.post("/tournaments/:id/bracket", createBracket);
   router.put("/tournaments/:id/bracket", replaceBracket);
+  router.delete("/tournaments/:id/bracket", deleteBracket);
   router.patch("/tournaments/:id/matches/:matchId/result", updateMatchResult);
   router.put("/tournaments/:id/matches/:matchId/result", replaceMatchResult);
   router.patch("/tournaments/:id/matches/:matchId/schedule", patchMatchSchedule);

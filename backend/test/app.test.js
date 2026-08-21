@@ -505,3 +505,55 @@ test("bracket regeneration requires confirmation and resets old results", async 
     false,
   );
 });
+
+test("an admin can persist an empty bracket and add participants again", async () => {
+  clearBrackets();
+  const participants = Array.from({ length: 4 }, (_, index) => ({
+    id: `futsal-${index + 1}`,
+    name: `Futsal Team ${index + 1}`,
+  }));
+  await fetch(`${baseUrl}/api/admin/tournaments/futsal-bp-2026/bracket`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ participants }),
+  });
+  await fetch(`${baseUrl}/api/admin/tournaments/futsal-bp-2026/top-scorers`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ topScorers: [{ name:"Player One", team:"Futsal Team 1", goals:3 }] }),
+  });
+
+  const clearResponse = await fetch(`${baseUrl}/api/admin/tournaments/futsal-bp-2026/bracket`, {
+    method: "DELETE",
+  });
+  const cleared = await clearResponse.json();
+  assert.equal(clearResponse.status, 200);
+  assert.equal(cleared.data.status, "empty");
+  assert.equal(cleared.data.participantCount, 0);
+  assert.deepEqual(cleared.data.participants, []);
+  assert.deepEqual(cleared.data.rounds, []);
+
+  const publicResponse = await fetch(`${baseUrl}/api/tournaments/futsal-bp-2026/bracket`);
+  const publicBracket = await publicResponse.json();
+  assert.equal(publicResponse.status, 200);
+  assert.equal(publicBracket.data.participantCount, 0);
+
+  const matchesResponse = await fetch(`${baseUrl}/api/tournaments/futsal-bp-2026/matches`);
+  const matches = await matchesResponse.json();
+  assert.equal(matchesResponse.status, 200);
+  assert.deepEqual(matches.data, []);
+
+  const scorersResponse = await fetch(`${baseUrl}/api/tournaments/futsal-bp-2026/top-scorers`);
+  const scorers = await scorersResponse.json();
+  assert.equal(scorersResponse.status, 200);
+  assert.equal(scorers.data[0].name, "Player One");
+
+  const refillResponse = await fetch(`${baseUrl}/api/admin/tournaments/futsal-bp-2026/bracket`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ participants:participants.slice(0, 2), confirmReplace:true }),
+  });
+  const refilled = await refillResponse.json();
+  assert.equal(refillResponse.status, 200);
+  assert.equal(refilled.data.participantCount, 2);
+});

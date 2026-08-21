@@ -1,7 +1,7 @@
 import './public-i18n.js?v=20260809-clean-empty-copy';
 import { API_BASE } from './api-config.js';
 import { loadCompetitionFormat, withOptionalStanding } from './competition-format.js';
-import { apiBracketView, bracketView, scheduleView, shell, standingView } from './sports.js?v=20260809-clean-empty-copy';
+import { apiBracketView, bracketView, scheduleView, shell, standingView } from './sports.js?v=20260821-empty-bracket';
 
 const host = document.querySelector('#sport-view');
 const localTeams = [

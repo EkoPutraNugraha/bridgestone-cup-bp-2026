@@ -24,7 +24,7 @@ function matchSchedule(match){
 }
 
 export function apiBracketView(title,bracket){
- if(!bracket)return '';
+ if(!bracket?.participants?.length||!bracket?.rounds?.length)return '';
  const participantName=id=>bracket.participants?.find(participant=>participant.id===id)?.name||'MENUNGGU HASIL';
  const matchCard=match=>{
   const home=match.homeParticipant?.name||'MENUNGGU HASIL';
