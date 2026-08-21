@@ -161,6 +161,11 @@
     line-height: 9px;
   }
 
+  .schedule-row b {
+    font-size: 11px;
+    line-height: 10px;
+  }
+
   .schedule-empty {
     min-height: 246px;
     padding: 8px;

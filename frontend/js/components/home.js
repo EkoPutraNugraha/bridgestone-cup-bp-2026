@@ -62,7 +62,7 @@ const liveScheduleCard = (sport, matches) => `<a class="schedule-card" data-sour
     <time datetime="${escapeHtml(match.scheduledAt)}"><b>${day}</b><small>${month}</small></time>
     <p>
       ${match.competitionCategory ? `<em class="schedule-category">${escapeHtml(match.competitionCategory)}</em>` : ''}
-      ${versusText}
+      <small>${versusText}</small>
       ${escapeHtml(match.venue || 'Venue menunggu')}<small>${time} WIB</small>
     </p>
   </div>`;
