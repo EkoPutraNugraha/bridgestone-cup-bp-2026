@@ -101,7 +101,7 @@ a,button{font:inherit}
 .sport-card i{position:absolute;top:46px;left:16px;width:34px;height:2px;background:rgba(148,110,31,.85)}
 .sport-card.active i{background:rgba(48,36,10,.85)}
 .sport-card h3{position:absolute;top:185px;left:16px;width:156px;margin:0;font-size:17px;line-height:23px}
-.sport-card b{position:absolute;left:16px;bottom:35px;color:#757369;font-size:10px}
+.sport-card b{position:absolute;left:16px;right:12px;bottom:35px;color:#757369;font-size:10px;line-height:1.35;white-space:normal}
 .sport-card.active b{color:#33240a}
 .arena-hint{top:706px;height:80px;border:1px solid #332b17;border-radius:14px;background:#0e0e0c}
 .arena-hint span{position:absolute;top:17px;left:43px;color:#e0ab36;font-size:15px;font-weight:700}

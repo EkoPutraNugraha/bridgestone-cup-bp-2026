@@ -1,4 +1,4 @@
-import './public-i18n.js?v=20260812-support-qr';
+import './public-i18n.js?v=20260821-live-bracket-counts';
 import { API_BASE as apiBase } from './api-config.js';
 import { renderGalleryPreview, renderHome, renderGreetings, renderSchedules, renderSports, renderSupporters } from './components/home.js?v=20260811-scrollable-schedules';
 
@@ -57,26 +57,56 @@ if (apiBase) {
     .then(payload => { latestGallery = payload.data || []; renderGalleryPreview(latestGallery, latestGallery.length ? 'api' : 'empty'); })
     .catch(() => {});
 
+  const loadJson = async path => {
+    const response = await fetch(`${apiBase}${path}`);
+    if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+    return response.json();
+  };
+  const loadBracketTotal = async tournamentId => {
+    const response = await fetch(`${apiBase}/tournaments/${tournamentId}/bracket`);
+    if (response.status === 404) return 0;
+    if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+    const payload = await response.json();
+    return Number(payload.data?.participantCount || 0);
+  };
+  const loadActiveCategories = sport => loadJson(`/sports/${sport}/competition-categories`)
+    .then(payload => payload.data?.activeCategories || []);
+  const categoryCount = (activeCategories, singles, doubles) => {
+    const parts = [];
+    if (activeCategories.includes('singles')) parts.push(`${singles} SINGLE`);
+    if (activeCategories.includes('doubles')) parts.push(`${doubles} GANDA`);
+    return parts.join(' • ');
+  };
+
   Promise.allSettled([
-    fetch(`${apiBase}/tournaments/futsal-bp-2026/standings`).then(response => response.ok ? response.json() : Promise.reject()),
-    fetch(`${apiBase}/tournaments/chess-bp-2026/standings`).then(response => response.ok ? response.json() : Promise.reject()),
-    fetch(`${apiBase}/tournaments/badminton-bp-2026/bracket`).then(response => response.ok ? response.json() : Promise.reject()),
-    fetch(`${apiBase}/tournaments/table-tennis-bp-2026/standings`).then(response => response.ok ? response.json() : Promise.reject()),
-    fetch(`${apiBase}/tournaments/football-bp-2026/bracket`).then(response => response.ok ? response.json() : Promise.reject()),
-    fetch(`${apiBase}/tournaments/fishing-bp-2026/pairs`).then(response => response.ok ? response.json() : Promise.reject()),
+    loadBracketTotal('futsal-bp-2026'),
+    loadBracketTotal('chess-bp-2026'),
+    Promise.all([
+      loadActiveCategories('badminton'),
+      loadBracketTotal('badminton-singles-bp-2026'),
+      loadBracketTotal('badminton-bp-2026'),
+    ]),
+    Promise.all([
+      loadActiveCategories('table-tennis'),
+      loadBracketTotal('table-tennis-bp-2026'),
+      loadBracketTotal('table-tennis-doubles-bp-2026'),
+    ]),
+    loadBracketTotal('football-bp-2026'),
+    loadJson('/tournaments/fishing-bp-2026/pairs').then(payload => Number(payload.data?.length || 0)),
   ]).then(([futsal, chess, badminton, tableTennis, football, fishing]) => {
-    const groupTotal = result => result.status === 'fulfilled'
-      ? (result.value.data || []).reduce((total, group) => total + (group.rows?.length || 0), 0)
-      : 0;
-    const bracketTotal = result => result.status === 'fulfilled' ? Number(result.value.data?.participantCount || 0) : 0;
-    const fishingTotal = fishing.status === 'fulfilled' ? Number(fishing.value.data?.length || 0) : 0;
     const counts = {};
-    if (groupTotal(futsal)) counts.FUTSAL = `${groupTotal(futsal)} TEAMS`;
-    if (groupTotal(chess)) counts.CHESS = `${groupTotal(chess)} PLAYERS`;
-    if (bracketTotal(badminton)) counts.BADMINTON = `${bracketTotal(badminton)} PAIRS`;
-    if (groupTotal(tableTennis)) counts['TABLE TENNIS'] = `${groupTotal(tableTennis)} PLAYERS`;
-    if (bracketTotal(football)) counts.FOOTBALL = `${bracketTotal(football)} TEAMS`;
-    if (fishingTotal) counts.FISHING = `${fishingTotal} PAIRS`;
+    if (futsal.status === 'fulfilled') counts.FUTSAL = `${futsal.value} TIM`;
+    if (chess.status === 'fulfilled') counts.CHESS = `${chess.value} PESERTA`;
+    if (badminton.status === 'fulfilled') {
+      const [activeCategories, singles, doubles] = badminton.value;
+      counts.BADMINTON = categoryCount(activeCategories, singles, doubles) || '0 PESERTA';
+    }
+    if (tableTennis.status === 'fulfilled') {
+      const [activeCategories, singles, doubles] = tableTennis.value;
+      counts['TABLE TENNIS'] = categoryCount(activeCategories, singles, doubles) || '0 PESERTA';
+    }
+    if (football.status === 'fulfilled') counts.FOOTBALL = `${football.value} TIM`;
+    if (fishing.status === 'fulfilled') counts.FISHING = `${fishing.value} PASANGAN`;
     renderSports(counts);
   });
 }
