@@ -36,6 +36,16 @@
   line-height: 14px;
 }
 
+.schedule-teams {
+  display: block;
+  font-weight: 700;
+  color: #ffffff;
+  margin-block: 2px;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-height: 1.25;
+}
+
 .schedule-empty {
   min-height: 430px;
   display: grid;
@@ -166,6 +176,12 @@
     line-height: 10px;
   }
 
+  .schedule-teams {
+    font-size: 10px;
+    line-height: 11px;
+    margin-block: 1px;
+  }
+
   .schedule-empty {
     min-height: 246px;
     padding: 8px;
@@ -193,3 +209,4 @@
     height: 205px !important;
   }
 }
+
